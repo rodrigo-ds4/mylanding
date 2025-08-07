@@ -32,7 +32,7 @@
             
             <div class="nav-right">
                 <!-- SELECTOR DE IDIOMAS ULTRA SIMPLE -->
-                <button id="language-button" class="lang-btn" onclick="testFunction();" style="background: red; color: white; padding: 10px; border: 2px solid white; cursor: pointer; font-size: 16px;">
+                <button id="language-button" class="lang-btn" style="background: fuchsia; color: white; padding: 15px; border: 3px solid white; font-size: 18px; cursor: pointer;">
                     🌐 <span id="current-language">EN</span>
                 </button>
                 
@@ -405,6 +405,11 @@
     <!-- Rainbow dot element -->
     <div class="rainbow-dot"></div>
 
-    <script src="script.js"></script>
+    <script>
+        // Forzar la recarga del script para evitar caché
+        const script = document.createElement('script');
+        script.src = `script.js?v=${new Date().getTime()}`;
+        document.body.appendChild(script);
+    </script>
 </body>
 </html> 

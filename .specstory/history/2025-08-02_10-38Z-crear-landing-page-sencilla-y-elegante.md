@@ -15522,9 +15522,164 @@ _**Assistant**_
 
 ---
 
+<details><summary>Edit file: index.html</summary>
 
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -33,5 +33,5 @@
+              <div class="nav-right">
+                  <!-- SELECTOR DE IDIOMAS ULTRA SIMPLE -->
+-                 <button id="language-button" class="lang-btn" onclick="alert('BOTÓN CLICKEADO!'); testFunction();" style="background: red; color: white; padding: 10px; border: 2px solid white; cursor: pointer; font-size: 16px;">
++                 <button id="language-button" class="lang-btn" onclick="testFunction();" style="background: red; color: white; padding: 10px; border: 2px solid white; cursor: pointer; font-size: 16px;">
+                      🌐 <span id="current-language">EN</span>
+                  </button>
+```
+
+</details>
 
 ---
+
+Ahora voy a mejorar la función de prueba para que sea más robusta:
+
+---
+
+<details><summary>Edit file: script.js</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 26, lines removed: 5
+
+```diff
+@@ -715,19 +715,40 @@
+  window.testFunction = function() {
+      console.log('🎉 FUNCIÓN DE PRUEBA EJECUTADA!');
+-     alert('¡LA FUNCIÓN JAVASCRIPT FUNCIONA!');
+      
+      // Cambiar color del botón para confirmar
+      const btn = document.getElementById('language-button');
++     console.log('🔍 Botón encontrado:', !!btn);
++     
+      if (btn) {
+-         btn.style.background = btn.style.background === 'red' ? 'green' : 'red';
+-         console.log('✅ Color del botón cambiado');
++         const currentBg = btn.style.background;
++         console.log('🎨 Color actual:', currentBg);
++         
++         if (currentBg === 'red' || currentBg === '') {
++             btn.style.background = 'green';
++             console.log('✅ Cambiado a VERDE');
++         } else {
++             btn.style.background = 'red';
++             console.log('✅ Cambiado a ROJO');
++         }
+      }
+      
+      // Cambiar texto
+      const langSpan = document.getElementById('current-language');
++     console.log('🔍 Span encontrado:', !!langSpan);
++     
+      if (langSpan) {
+-         langSpan.textContent = langSpan.textContent === 'EN' ? 'ES' : 'EN';
+-         console.log('✅ Texto cambiado');
++         const currentText = langSpan.textContent;
++         console.log('📝 Texto actual:', currentText);
++         
++         if (currentText === 'EN') {
++             langSpan.textContent = 'ES';
++             console.log('✅ Cambiado a ES');
++         } else {
++             langSpan.textContent = 'EN';
++             console.log('✅ Cambiado a EN');
+          }
++     }
++     
++     alert('¡Función ejecutada! Revisa la consola para logs.');
+  };
+  
+```
+
+</details>
+
+---
+
+Ahora voy a hacer commit y probar:
+
+---
+
+```bash
+git add . && git commit -m "🔧 DEBUG: Improved test function with detailed logging" && git push origin main
+```
+
+```
+rotpando@MBPdeRodrigo2 landing % git add . && git commit -m "🔧 DEBUG: Improved test function with detailed 
+logging" && git push origin main git add . && git commit -m "🔧 DEBUG: Improved test function with detailed 
+logging" && git push origin main
+[main e925611] 🔧 DEBUG: Improved test function with detailed logging
+ 3 files changed, 184 insertions(+), 6 deletions(-)
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 11 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 2.55 KiB | 1.27 MiB/s, done.
+Total 7 (delta 4), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://github.com/rodrigo-ds4/mylanding.git
+   981b046..e925611  main -> main
+rotpando@MBPdeRodrigo2 landing %
+```
+
+---
+
+¡**EXCELENTE! 🎉 ¡Ya sabemos que el botón funciona!**
+
+## 🧪 **Ahora prueba esto:**
+
+1. **Recarga la página** (`http://localhost:3001`)
+2. **Abre DevTools** (F12) → **Console**
+3. **Haz click en el botón rojo** 🌐 EN
+4. **Verás un alert** que dice "¡Función ejecutada! Revisa la consola para logs."
+5. **Cierra el alert** y **mira la consola**
+
+**En la consola deberías ver algo como:**
+```
+🎉 FUNCIÓN DE PRUEBA EJECUTADA!
+🔍 Botón encontrado: true
+🎨 Color actual: red
+✅ Cambiado a VERDE
+🔍 Span encontrado: true
+📝 Texto actual: EN
+✅ Cambiado a ES
+```
+
+**Y el botón debería:**
+- Cambiar de ROJO a VERDE
+- El texto debería cambiar de "EN" a "ES"
+
+## 🔍 **Dime exactamente qué ves:**
+
+1. **¿Aparece el alert?**
+2. **¿Qué logs ves en la consola?**
+3. **¿Cambia el color del botón?**
+4. **¿Cambia el texto?**
+
+Con esta información sabremos exactamente dónde está el problema y podremos crear la función de idiomas que funcione perfectamente. 🚀
+
+¡Ya estamos muy cerca de solucionarlo! 💪
+
+---
+
+_**User**_
+
+no anda.... no aparecer el alert ni el texto ni el color....
+
+---
+
+_**Assistant**_
 
 
 
