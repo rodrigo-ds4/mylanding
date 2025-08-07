@@ -31,15 +31,11 @@
             </ul>
             
             <div class="nav-right">
-                <div class="language-selector">
-                    <div class="current-lang">
-                        🇺🇸 <span>English</span>
-                    </div>
-                    <div class="lang-dropdown">
-                        <div class="lang-option" data-lang="en">🇺🇸 English</div>
-                        <div class="lang-option" data-lang="es">🇪🇸 Español</div>
-                        <div class="lang-option" data-lang="de">🇩🇪 Deutsch</div>
-                    </div>
+                <!-- Nuevo selector de idiomas -->
+                <div class="language-switcher">
+                    <button class="lang-btn" onclick="switchLanguage()">
+                        🌐 <span id="current-language">EN</span>
+                    </button>
                 </div>
                 
                 <div class="hamburger">
