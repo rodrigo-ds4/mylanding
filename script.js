@@ -709,30 +709,22 @@ let currentLanguage = 'en';
 let particles = [];
 let rainbowBall;
 
-// Clase para la bolita con física mejorada (limitada al hero)
+// Clase para la pelota gigante que rebota por toda la página
 class RainbowBall {
     constructor() {
-        this.heroSection = document.querySelector('.hero');
-        if (!this.heroSection) return;
-        
-        const heroRect = this.heroSection.getBoundingClientRect();
-        this.containerTop = this.heroSection.offsetTop;
-        this.containerHeight = this.heroSection.offsetHeight;
-        this.containerWidth = this.heroSection.offsetWidth;
-        
-        this.x = this.containerWidth / 2;
+        this.x = window.innerWidth / 2;
         this.y = 100;
-        this.vx = (Math.random() - 0.5) * 6;
-        this.vy = 2;
-        this.radius = 25; // Más grande
-        this.gravity = 0.3;
-        this.friction = 0.99;
-        this.bounce = 0.7;
+        this.vx = (Math.random() - 0.5) * 8;
+        this.vy = 3;
+        this.radius = 60; // Mucho más grande
+        this.gravity = 0.4;
+        this.friction = 0.995;
+        this.bounce = 0.8;
         
         // Crear elemento
         this.element = document.createElement('div');
         this.element.className = 'rainbow-physics-ball';
-        this.heroSection.appendChild(this.element); // Añadir al hero en lugar del body
+        document.body.appendChild(this.element);
         
         // Añadir animación CSS
         if (!document.getElementById('rainbow-ball-styles')) {
@@ -740,8 +732,8 @@ class RainbowBall {
             style.id = 'rainbow-ball-styles';
             style.textContent = `
                 @keyframes rainbowGlow {
-                    0% { filter: hue-rotate(0deg) brightness(1.2); }
-                    100% { filter: hue-rotate(360deg) brightness(1.2); }
+                    0% { filter: hue-rotate(0deg) brightness(1.3) saturate(1.2); }
+                    100% { filter: hue-rotate(360deg) brightness(1.3) saturate(1.2); }
                 }
             `;
             document.head.appendChild(style);
@@ -751,8 +743,6 @@ class RainbowBall {
     }
     
     update() {
-        if (!this.heroSection) return;
-        
         // Aplicar gravedad
         this.vy += this.gravity;
         
@@ -760,11 +750,11 @@ class RainbowBall {
         this.x += this.vx;
         this.y += this.vy;
         
-        // Límites del hero section
+        // Límites de la ventana completa
         const leftBound = this.radius;
-        const rightBound = this.containerWidth - this.radius;
+        const rightBound = window.innerWidth - this.radius;
         const topBound = this.radius;
-        const bottomBound = this.containerHeight - this.radius;
+        const bottomBound = window.innerHeight - this.radius;
         
         // Rebote horizontal
         if (this.x <= leftBound || this.x >= rightBound) {
@@ -784,7 +774,7 @@ class RainbowBall {
         this.vx *= this.friction;
         this.vy *= this.friction;
         
-        // Actualizar posición del elemento (relativa al hero)
+        // Actualizar posición del elemento (fixed, toda la ventana)
         this.element.style.left = (this.x - this.radius) + 'px';
         this.element.style.top = (this.y - this.radius) + 'px';
         
@@ -793,34 +783,26 @@ class RainbowBall {
     }
     
     createImpactParticles() {
-        const heroRect = this.heroSection.getBoundingClientRect();
-        for (let i = 0; i < 8; i++) {
-            particles.push(new Particle(
-                heroRect.left + this.x, 
-                heroRect.top + this.y, 
-                'rainbow'
-            ));
+        for (let i = 0; i < 12; i++) {
+            particles.push(new Particle(this.x, this.y, 'rainbow'));
         }
     }
     
-    impulse(force = 8) {
+    impulse(force = 12) {
         this.vx += (Math.random() - 0.5) * force;
         this.vy += (Math.random() - 0.5) * force;
     }
     
     // Actualizar dimensiones al redimensionar
     updateBounds() {
-        if (!this.heroSection) return;
-        
-        this.containerWidth = this.heroSection.offsetWidth;
-        this.containerHeight = this.heroSection.offsetHeight;
-        
         // Ajustar posición si está fuera de los nuevos límites
-        const rightBound = this.containerWidth - this.radius;
-        const bottomBound = this.containerHeight - this.radius;
+        const rightBound = window.innerWidth - this.radius;
+        const bottomBound = window.innerHeight - this.radius;
         
         if (this.x > rightBound) this.x = rightBound;
         if (this.y > bottomBound) this.y = bottomBound;
+        if (this.x < this.radius) this.x = this.radius;
+        if (this.y < this.radius) this.y = this.radius;
     }
 }
 
@@ -1165,12 +1147,20 @@ const languageData = {
 };
 
 function changeLanguage(lang) {
-    if (!translations[lang]) return;
+    console.log('🌐 Cambiando idioma a:', lang);
+    
+    if (!translations[lang]) {
+        console.error('❌ Idioma no encontrado:', lang);
+        return;
+    }
     
     currentLanguage = lang;
     
     // Actualizar todos los elementos con data-translate
-    document.querySelectorAll('[data-translate]').forEach(element => {
+    const elementsToTranslate = document.querySelectorAll('[data-translate]');
+    console.log('📝 Elementos a traducir:', elementsToTranslate.length);
+    
+    elementsToTranslate.forEach(element => {
         const key = element.getAttribute('data-translate');
         if (translations[lang][key]) {
             element.textContent = translations[lang][key];
@@ -1181,61 +1171,103 @@ function changeLanguage(lang) {
     const currentLang = document.querySelector('.current-lang');
     if (currentLang && languageData[lang]) {
         currentLang.innerHTML = `${languageData[lang].flag} <span>${languageData[lang].name}</span>`;
+        console.log('🏳️ Selector actualizado a:', languageData[lang].name);
     }
     
     // Guardar preferencia
     localStorage.setItem('preferred-language', lang);
+    console.log('💾 Idioma guardado en localStorage');
     
     // Cerrar dropdown
     closeLanguageDropdown();
+    
+    console.log('✅ Cambio de idioma completado');
 }
 
 function toggleLanguageDropdown() {
+    console.log('🔄 Toggle dropdown');
     const dropdown = document.querySelector('.lang-dropdown');
     const currentLang = document.querySelector('.current-lang');
     
     if (dropdown && currentLang) {
+        const isActive = dropdown.classList.contains('active');
+        console.log('📋 Estado actual del dropdown:', isActive ? 'abierto' : 'cerrado');
+        
         dropdown.classList.toggle('active');
         currentLang.classList.toggle('active');
+        
+        console.log('📋 Nuevo estado del dropdown:', dropdown.classList.contains('active') ? 'abierto' : 'cerrado');
+    } else {
+        console.error('❌ No se encontraron elementos del dropdown');
     }
 }
 
 function closeLanguageDropdown() {
+    console.log('❌ Cerrando dropdown');
     const dropdown = document.querySelector('.lang-dropdown');
     const currentLang = document.querySelector('.current-lang');
     
     if (dropdown && currentLang) {
         dropdown.classList.remove('active');
         currentLang.classList.remove('active');
+        console.log('✅ Dropdown cerrado');
     }
 }
 
 function initLanguageSystem() {
+    console.log('🌍 Inicializando sistema de idiomas...');
+    
     // Cargar idioma preferido
     const savedLang = localStorage.getItem('preferred-language') || 'en';
+    console.log('💾 Idioma guardado:', savedLang);
     changeLanguage(savedLang);
     
     // Event listeners para el selector de idioma
     const currentLang = document.querySelector('.current-lang');
     const langOptions = document.querySelectorAll('.lang-option');
     
+    console.log('🔍 Elementos encontrados:', {
+        currentLang: !!currentLang,
+        langOptions: langOptions.length
+    });
+    
     if (currentLang) {
-        currentLang.addEventListener('click', (e) => {
+        // Remover listeners anteriores si existen
+        currentLang.replaceWith(currentLang.cloneNode(true));
+        const newCurrentLang = document.querySelector('.current-lang');
+        
+        newCurrentLang.addEventListener('click', (e) => {
+            console.log('👆 Click en current-lang');
+            e.preventDefault();
             e.stopPropagation();
             toggleLanguageDropdown();
         });
+        
+        console.log('✅ Event listener agregado a current-lang');
     }
     
-    langOptions.forEach(option => {
+    // Re-obtener las opciones después de posibles cambios
+    const freshLangOptions = document.querySelectorAll('.lang-option');
+    freshLangOptions.forEach((option, index) => {
         option.addEventListener('click', (e) => {
+            console.log('👆 Click en lang-option:', option.getAttribute('data-lang'));
+            e.preventDefault();
             e.stopPropagation();
             const lang = option.getAttribute('data-lang');
-            changeLanguage(lang);
+            if (lang) {
+                changeLanguage(lang);
+            }
         });
+        console.log(`✅ Event listener ${index + 1} agregado a lang-option`);
     });
     
     // Cerrar dropdown al hacer clic fuera
-    document.addEventListener('click', closeLanguageDropdown);
+    document.addEventListener('click', (e) => {
+        const langSelector = document.querySelector('.language-selector');
+        if (langSelector && !langSelector.contains(e.target)) {
+            closeLanguageDropdown();
+        }
+    });
     
     // Cerrar dropdown con Escape
     document.addEventListener('keydown', (e) => {
@@ -1243,6 +1275,8 @@ function initLanguageSystem() {
             closeLanguageDropdown();
         }
     });
+    
+    console.log('🎉 Sistema de idiomas inicializado completamente');
 }
 
 // Mobile menu
