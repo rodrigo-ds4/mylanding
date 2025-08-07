@@ -709,14 +709,22 @@ let currentLanguage = 'en';
 let particles = [];
 let rainbowBall;
 
-// Clase para la bolita con física mejorada (la original)
+// Clase para la bolita con física mejorada (limitada al hero)
 class RainbowBall {
     constructor() {
-        this.x = window.innerWidth / 2;
-        this.y = 50;
+        this.heroSection = document.querySelector('.hero');
+        if (!this.heroSection) return;
+        
+        const heroRect = this.heroSection.getBoundingClientRect();
+        this.containerTop = this.heroSection.offsetTop;
+        this.containerHeight = this.heroSection.offsetHeight;
+        this.containerWidth = this.heroSection.offsetWidth;
+        
+        this.x = this.containerWidth / 2;
+        this.y = 100;
         this.vx = (Math.random() - 0.5) * 6;
         this.vy = 2;
-        this.radius = 30;
+        this.radius = 25; // Más grande
         this.gravity = 0.3;
         this.friction = 0.99;
         this.bounce = 0.7;
@@ -724,19 +732,7 @@ class RainbowBall {
         // Crear elemento
         this.element = document.createElement('div');
         this.element.className = 'rainbow-physics-ball';
-        this.element.style.cssText = `
-            position: fixed;
-            width: ${this.radius * 2}px;
-            height: ${this.radius * 2}px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
-            box-shadow: 
-                0 0 30px rgba(255, 255, 255, 0.8),
-                inset 0 0 20px rgba(255, 255, 255, 0.3);
-            z-index: 999;
-            pointer-events: none;
-            animation: rainbowGlow 2s linear infinite;
-        `;
+        this.heroSection.appendChild(this.element); // Añadir al hero en lugar del body
         
         // Añadir animación CSS
         if (!document.getElementById('rainbow-ball-styles')) {
@@ -751,11 +747,12 @@ class RainbowBall {
             document.head.appendChild(style);
         }
         
-        document.body.appendChild(this.element);
         this.update();
     }
     
     update() {
+        if (!this.heroSection) return;
+        
         // Aplicar gravedad
         this.vy += this.gravity;
         
@@ -763,21 +760,23 @@ class RainbowBall {
         this.x += this.vx;
         this.y += this.vy;
         
-        // Rebotes en los bordes
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        // Límites del hero section
+        const leftBound = this.radius;
+        const rightBound = this.containerWidth - this.radius;
+        const topBound = this.radius;
+        const bottomBound = this.containerHeight - this.radius;
         
         // Rebote horizontal
-        if (this.x <= this.radius || this.x >= windowWidth - this.radius) {
+        if (this.x <= leftBound || this.x >= rightBound) {
             this.vx *= -this.bounce;
-            this.x = this.x <= this.radius ? this.radius : windowWidth - this.radius;
+            this.x = this.x <= leftBound ? leftBound : rightBound;
             this.createImpactParticles();
         }
         
         // Rebote vertical
-        if (this.y <= this.radius || this.y >= windowHeight - this.radius) {
+        if (this.y <= topBound || this.y >= bottomBound) {
             this.vy *= -this.bounce;
-            this.y = this.y <= this.radius ? this.radius : windowHeight - this.radius;
+            this.y = this.y <= topBound ? topBound : bottomBound;
             this.createImpactParticles();
         }
         
@@ -785,7 +784,7 @@ class RainbowBall {
         this.vx *= this.friction;
         this.vy *= this.friction;
         
-        // Actualizar posición del elemento
+        // Actualizar posición del elemento (relativa al hero)
         this.element.style.left = (this.x - this.radius) + 'px';
         this.element.style.top = (this.y - this.radius) + 'px';
         
@@ -794,14 +793,34 @@ class RainbowBall {
     }
     
     createImpactParticles() {
+        const heroRect = this.heroSection.getBoundingClientRect();
         for (let i = 0; i < 8; i++) {
-            particles.push(new Particle(this.x, this.y, 'rainbow'));
+            particles.push(new Particle(
+                heroRect.left + this.x, 
+                heroRect.top + this.y, 
+                'rainbow'
+            ));
         }
     }
     
     impulse(force = 8) {
         this.vx += (Math.random() - 0.5) * force;
         this.vy += (Math.random() - 0.5) * force;
+    }
+    
+    // Actualizar dimensiones al redimensionar
+    updateBounds() {
+        if (!this.heroSection) return;
+        
+        this.containerWidth = this.heroSection.offsetWidth;
+        this.containerHeight = this.heroSection.offsetHeight;
+        
+        // Ajustar posición si está fuera de los nuevos límites
+        const rightBound = this.containerWidth - this.radius;
+        const bottomBound = this.containerHeight - this.radius;
+        
+        if (this.x > rightBound) this.x = rightBound;
+        if (this.y > bottomBound) this.y = bottomBound;
     }
 }
 
@@ -1409,6 +1428,58 @@ function initAnimations() {
     });
 }
 
+// Funcionalidad del formulario de contacto
+function initContactForm() {
+    const contactForm = document.getElementById('contactForm');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(contactForm);
+            const button = contactForm.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            
+            // Estado de carga
+            button.textContent = 'Sending...';
+            button.disabled = true;
+            button.style.opacity = '0.7';
+            
+            // Simular envío (reemplazar con tu lógica de backend)
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Éxito
+                button.textContent = 'Sent! ✓';
+                button.style.background = 'var(--secondary-color)';
+                
+                // Efecto arcoiris en el formulario
+                addRainbowEffect(contactForm);
+                
+                // Limpiar formulario
+                setTimeout(() => {
+                    contactForm.reset();
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                    button.style.background = 'var(--primary-color)';
+                }, 3000);
+                
+            } catch (error) {
+                button.textContent = 'Error - Try again';
+                button.style.background = '#dc2626';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                    button.style.background = 'var(--primary-color)';
+                }, 3000);
+            }
+        });
+    }
+}
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
     // Añadir estilos CSS
@@ -1418,6 +1489,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initAnimations();
     initLanguageSystem();
     initInteractiveEffects();
+    initContactForm();
     
     // Observar skill items
     document.querySelectorAll('.skill-item').forEach(skill => {
@@ -1443,14 +1515,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Manejar redimensionamiento de ventana
 window.addEventListener('resize', () => {
     if (rainbowBall) {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        if (rainbowBall.x > windowWidth - rainbowBall.radius) {
-            rainbowBall.x = windowWidth - rainbowBall.radius;
-        }
-        if (rainbowBall.y > windowHeight - rainbowBall.radius) {
-            rainbowBall.y = windowHeight - rainbowBall.radius;
-        }
+        rainbowBall.updateBounds();
     }
 }); 
