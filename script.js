@@ -704,7 +704,285 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Sistema de Traducciones
+// Variables globales
+let currentLanguage = 'en';
+
+// Physics Ball
+class PhysicsBall {
+    constructor() {
+        this.x = window.innerWidth / 2;
+        this.y = window.innerHeight / 2;
+        this.vx = (Math.random() - 0.5) * 8; // Velocidad horizontal aleatoria
+        this.vy = (Math.random() - 0.5) * 8; // Velocidad vertical aleatoria
+        this.radius = 6;
+        this.gravity = 0.2;
+        this.friction = 0.98;
+        this.bounce = 0.8;
+        
+        this.element = document.createElement('div');
+        this.element.className = 'physics-ball';
+        document.body.appendChild(this.element);
+        
+        this.update();
+    }
+    
+    update() {
+        // Aplicar gravedad
+        this.vy += this.gravity;
+        
+        // Actualizar posición
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        // Rebotes en los bordes
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        // Rebote horizontal
+        if (this.x <= this.radius || this.x >= windowWidth - this.radius) {
+            this.vx *= -this.bounce;
+            this.x = this.x <= this.radius ? this.radius : windowWidth - this.radius;
+            
+            // Añadir un poco de variación al rebote
+            this.vx += (Math.random() - 0.5) * 2;
+        }
+        
+        // Rebote vertical
+        if (this.y <= this.radius || this.y >= windowHeight - this.radius) {
+            this.vy *= -this.bounce;
+            this.y = this.y <= this.radius ? this.radius : windowHeight - this.radius;
+            
+            // Añadir un poco de variación al rebote
+            this.vy += (Math.random() - 0.5) * 2;
+        }
+        
+        // Aplicar fricción
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        
+        // Limitar velocidades máximas
+        const maxSpeed = 12;
+        if (Math.abs(this.vx) > maxSpeed) this.vx = this.vx > 0 ? maxSpeed : -maxSpeed;
+        if (Math.abs(this.vy) > maxSpeed) this.vy = this.vy > 0 ? maxSpeed : -maxSpeed;
+        
+        // Actualizar posición del elemento
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
+        
+        // Continuar animación
+        requestAnimationFrame(() => this.update());
+    }
+    
+    // Método para dar impulso a la bolita
+    impulse(force = 5) {
+        this.vx += (Math.random() - 0.5) * force;
+        this.vy += (Math.random() - 0.5) * force;
+    }
+}
+
+// Inicializar la bolita
+let physicsBall;
+
+// Animaciones y efectos
+function initAnimations() {
+    // Efecto de escritura
+    const typingElements = document.querySelectorAll('.typing-text');
+    typingElements.forEach(element => {
+        const text = element.textContent;
+        element.textContent = '';
+        element.innerHTML = '<span class="cursor"></span>';
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < text.length) {
+                element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        };
+        
+        setTimeout(typeWriter, 1000);
+    });
+    
+    // Animación de números (contadores)
+    const animateNumbers = () => {
+        const numbers = document.querySelectorAll('.stat-number');
+        numbers.forEach(number => {
+            const target = parseInt(number.getAttribute('data-target') || number.textContent);
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                number.textContent = Math.floor(current) + (number.textContent.includes('+') ? '+' : '');
+            }, 40);
+        });
+    };
+    
+    // Observer para animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                
+                // Animar números cuando la sección stats es visible
+                if (entry.target.querySelector('.stat-number')) {
+                    animateNumbers();
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observar elementos para animación
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(section);
+    });
+}
+
+// Efecto hover para el code-block (cuadrado const developer)
+function initCodeBlockHover() {
+    const codeBlock = document.querySelector('.code-block');
+    if (codeBlock) {
+        codeBlock.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02) rotateX(5deg) rotateY(5deg)';
+            this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Dar impulso a la bolita cuando se hace hover
+            if (physicsBall) {
+                physicsBall.impulse(8);
+            }
+        });
+        
+        codeBlock.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
+        });
+        
+        // Efecto de movimiento sutil continuo
+        setInterval(() => {
+            if (!codeBlock.matches(':hover')) {
+                const randomX = (Math.random() - 0.5) * 2;
+                const randomY = (Math.random() - 0.5) * 2;
+                codeBlock.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                
+                setTimeout(() => {
+                    if (!codeBlock.matches(':hover')) {
+                        codeBlock.style.transform = 'translate(0, 0)';
+                    }
+                }, 1000);
+            }
+        }, 3000);
+    }
+}
+
+// Función para animar las skill bars
+function animateSkillBar(skillItem) {
+    const progressBar = skillItem.querySelector('.skill-progress');
+    const level = skillItem.getAttribute('data-level');
+    
+    if (progressBar && level) {
+        setTimeout(() => {
+            progressBar.style.width = level + '%';
+        }, 200);
+    }
+}
+
+// Observer para las skill bars
+const skillsObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+            setTimeout(() => {
+                animateSkillBar(entry.target);
+            }, index * 200); // Efecto cascada
+            skillsObserver.unobserve(entry.target);
+        }
+    });
+}, {
+    threshold: 0.5
+});
+
+// Observar todas las skill items
+document.querySelectorAll('.skill-item').forEach(skill => {
+    skillsObserver.observe(skill);
+});
+
+// Función para actualizar el enlace activo del navbar
+let scrollTimeout;
+function updateActiveNavLink() {
+    if (scrollTimeout) return;
+    
+    scrollTimeout = setTimeout(() => {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        let current = '';
+        const scrollPosition = window.scrollY + 100;
+        
+        // Determinar qué sección está actualmente visible
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionHeight = section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
+            }
+        });
+        
+        // Si estamos en la parte superior de la página
+        if (window.scrollY < 50) {
+            current = 'home';
+        }
+        
+        // Si estamos en la parte inferior de la página
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
+            current = 'contact';
+        }
+        
+        // Actualizar enlaces activos
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
+        
+        scrollTimeout = null;
+    }, 10);
+}
+
+// Smooth scroll para los enlaces de navegación
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const headerHeight = document.querySelector('.header').offsetHeight;
+            const targetPosition = target.offsetTop - headerHeight;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    });
+});
+
+// Event listeners
+window.addEventListener('scroll', updateActiveNavLink);
+window.addEventListener('load', updateActiveNavLink);
+
+// Sistema de idiomas
 const translations = {
     en: {
         // Navigation
@@ -724,24 +1002,24 @@ const translations = {
         
         // About Section
         'about-title': 'About Me',
-        'about-subtitle': 'Get to know who I am and what drives my passion for development',
+        'about-subtitle': 'Passionate about transforming data into meaningful insights',
         
         // Projects Section
         'projects-title': 'Featured Projects',
-        'projects-subtitle': 'A showcase of my most recent and impactful work',
+        'projects-subtitle': 'Some of my recent work in data science and machine learning',
         
         // Skills Section
-        'skills-title': 'Technologies & Skills',
-        'skills-subtitle': 'The tools I use to create amazing solutions',
+        'skills-title': 'Technical Skills',
+        'skills-subtitle': 'Technologies and tools I work with',
         
         // Contact Section
         'contact-title': 'Get In Touch',
-        'contact-subtitle': "Let's work together to bring your ideas to life",
+        'contact-subtitle': "Let's work together to bring your data projects to life"
     },
     es: {
         // Navigation
         'nav-home': 'Inicio',
-        'nav-about': 'Sobre mí',
+        'nav-about': 'Acerca',
         'nav-projects': 'Proyectos',
         'nav-skills': 'Habilidades',
         'nav-contact': 'Contacto',
@@ -756,23 +1034,23 @@ const translations = {
         
         // About Section
         'about-title': 'Sobre Mí',
-        'about-subtitle': 'Conoce quién soy y qué impulsa mi pasión por el desarrollo',
+        'about-subtitle': 'Apasionado por transformar datos en insights significativos',
         
         // Projects Section
         'projects-title': 'Proyectos Destacados',
-        'projects-subtitle': 'Una muestra de mi trabajo más reciente e impactante',
+        'projects-subtitle': 'Algunos de mis trabajos recientes en ciencia de datos y machine learning',
         
         // Skills Section
-        'skills-title': 'Tecnologías y Habilidades',
-        'skills-subtitle': 'Las herramientas que uso para crear soluciones increíbles',
+        'skills-title': 'Habilidades Técnicas',
+        'skills-subtitle': 'Tecnologías y herramientas con las que trabajo',
         
         // Contact Section
-        'contact-title': 'Ponte en Contacto',
-        'contact-subtitle': 'Trabajemos juntos para dar vida a tus ideas',
+        'contact-title': 'Contacto',
+        'contact-subtitle': 'Trabajemos juntos para dar vida a tus proyectos de datos'
     },
     de: {
         // Navigation
-        'nav-home': 'Start',
+        'nav-home': 'Startseite',
         'nav-about': 'Über mich',
         'nav-projects': 'Projekte',
         'nav-skills': 'Fähigkeiten',
@@ -788,125 +1066,102 @@ const translations = {
         
         // About Section
         'about-title': 'Über Mich',
-        'about-subtitle': 'Lernen Sie mich kennen und erfahren Sie, was meine Leidenschaft für die Entwicklung antreibt',
+        'about-subtitle': 'Leidenschaftlich daran interessiert, Daten in bedeutungsvolle Erkenntnisse zu verwandeln',
         
         // Projects Section
         'projects-title': 'Ausgewählte Projekte',
-        'projects-subtitle': 'Eine Auswahl meiner neuesten und wirkungsvollsten Arbeiten',
+        'projects-subtitle': 'Einige meiner neuesten Arbeiten in Data Science und Machine Learning',
         
         // Skills Section
-        'skills-title': 'Technologien & Fähigkeiten',
-        'skills-subtitle': 'Die Tools, die ich verwende, um erstaunliche Lösungen zu erstellen',
+        'skills-title': 'Technische Fähigkeiten',
+        'skills-subtitle': 'Technologien und Tools, mit denen ich arbeite',
         
         // Contact Section
         'contact-title': 'Kontakt aufnehmen',
-        'contact-subtitle': 'Lassen Sie uns zusammenarbeiten, um Ihre Ideen zum Leben zu erwecken',
+        'contact-subtitle': 'Lassen Sie uns zusammenarbeiten, um Ihre Datenprojekte zum Leben zu erwecken'
     }
 };
 
-let currentLanguage = 'en'; // Default en inglés
-
-// Datos de idiomas
 const languageData = {
-    en: { flag: '🇺🇸', code: 'EN', name: 'English' },
-    es: { flag: '🇪🇸', code: 'ES', name: 'Español' },
-    de: { flag: '🇩🇪', code: 'DE', name: 'Deutsch' }
+    en: { flag: '🇺🇸', name: 'English' },
+    es: { flag: '🇪🇸', name: 'Español' },
+    de: { flag: '🇩🇪', name: 'Deutsch' }
 };
 
-// Función para cambiar idioma
 function changeLanguage(lang) {
+    if (!translations[lang]) return;
+    
     currentLanguage = lang;
     
     // Actualizar todos los elementos con data-translate
     document.querySelectorAll('[data-translate]').forEach(element => {
         const key = element.getAttribute('data-translate');
-        if (translations[lang] && translations[lang][key]) {
+        if (translations[lang][key]) {
             element.textContent = translations[lang][key];
         }
     });
     
-    // Actualizar selector de idioma
-    const currentLang = document.getElementById('current-lang');
-    const flag = currentLang.querySelector('.flag');
-    const langCode = currentLang.querySelector('.lang-code');
+    // Actualizar el selector de idioma
+    const currentLang = document.querySelector('.current-lang');
+    if (currentLang && languageData[lang]) {
+        currentLang.innerHTML = `${languageData[lang].flag} <span>${languageData[lang].name}</span>`;
+    }
     
-    const langInfo = languageData[lang];
-    flag.textContent = langInfo.flag;
-    langCode.textContent = langInfo.code;
-    
-    // Actualizar opciones activas
-    document.querySelectorAll('.lang-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.lang === lang) {
-            option.classList.add('active');
-        }
-    });
-    
-    // Guardar preferencia en localStorage
-    localStorage.setItem('preferredLanguage', lang);
+    // Guardar preferencia
+    localStorage.setItem('preferred-language', lang);
     
     // Cerrar dropdown
     closeLanguageDropdown();
 }
 
-// Función para abrir/cerrar dropdown
 function toggleLanguageDropdown() {
-    const dropdown = document.getElementById('lang-dropdown');
-    const currentLang = document.getElementById('current-lang');
+    const dropdown = document.querySelector('.lang-dropdown');
+    const currentLang = document.querySelector('.current-lang');
     
-    dropdown.classList.toggle('active');
-    currentLang.classList.toggle('active');
+    if (dropdown && currentLang) {
+        dropdown.classList.toggle('active');
+        currentLang.classList.toggle('active');
+    }
 }
 
-// Función para cerrar dropdown
 function closeLanguageDropdown() {
-    const dropdown = document.getElementById('lang-dropdown');
-    const currentLang = document.getElementById('current-lang');
+    const dropdown = document.querySelector('.lang-dropdown');
+    const currentLang = document.querySelector('.current-lang');
     
-    dropdown.classList.remove('active');
-    currentLang.classList.remove('active');
+    if (dropdown && currentLang) {
+        dropdown.classList.remove('active');
+        currentLang.classList.remove('active');
+    }
 }
 
-// Inicializar sistema de idiomas
 function initLanguageSystem() {
-    const currentLang = document.getElementById('current-lang');
-    const dropdown = document.getElementById('lang-dropdown');
+    // Cargar idioma preferido
+    const savedLang = localStorage.getItem('preferred-language') || 'en';
+    changeLanguage(savedLang);
     
-    // Cargar idioma guardado o usar inglés por defecto
-    const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
-    changeLanguage(savedLanguage);
+    // Event listeners para el selector de idioma
+    const currentLang = document.querySelector('.current-lang');
+    const langOptions = document.querySelectorAll('.lang-option');
     
-    // Event listener para abrir/cerrar dropdown
-    currentLang.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleLanguageDropdown();
-    });
+    if (currentLang) {
+        currentLang.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleLanguageDropdown();
+        });
+    }
     
-    // Event listeners para opciones de idioma
-    document.querySelectorAll('.lang-option').forEach(option => {
+    langOptions.forEach(option => {
         option.addEventListener('click', (e) => {
             e.stopPropagation();
-            const selectedLang = option.dataset.lang;
-            if (selectedLang !== currentLanguage) {
-                changeLanguage(selectedLang);
-                
-                // Pequeña animación de feedback
-                currentLang.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    currentLang.style.transform = 'scale(1)';
-                }, 150);
-            }
+            const lang = option.getAttribute('data-lang');
+            changeLanguage(lang);
         });
     });
     
     // Cerrar dropdown al hacer clic fuera
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.language-selector')) {
-            closeLanguageDropdown();
-        }
-    });
+    document.addEventListener('click', closeLanguageDropdown);
     
-    // Cerrar dropdown con ESC
+    // Cerrar dropdown con Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             closeLanguageDropdown();
@@ -914,12 +1169,73 @@ function initLanguageSystem() {
     });
 }
 
-// Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    initLanguageSystem();
+// Mobile menu
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        
+        // Prevenir scroll del body cuando el menú está abierto
+        if (navMenu.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    });
     
-    // Aplicar idioma por defecto después de un pequeño delay para evitar flash
+    // Cerrar menú móvil al hacer clic en un enlace
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+    });
+    
+    // Cerrar menú móvil al redimensionar la ventana
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 1024) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    initAnimations();
+    initLanguageSystem();
+    initCodeBlockHover();
+    
+    // Inicializar la bolita física después de que la página esté completamente cargada
     setTimeout(() => {
-        changeLanguage(currentLanguage);
-    }, 100);
+        physicsBall = new PhysicsBall();
+    }, 1000);
+    
+    // Dar impulso a la bolita ocasionalmente
+    setInterval(() => {
+        if (physicsBall && Math.random() < 0.1) { // 10% de probabilidad cada 5 segundos
+            physicsBall.impulse(3);
+        }
+    }, 5000);
+});
+
+// Manejar redimensionamiento de ventana
+window.addEventListener('resize', () => {
+    if (physicsBall) {
+        // Ajustar posición de la bolita si está fuera de los nuevos límites
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        
+        if (physicsBall.x > windowWidth - physicsBall.radius) {
+            physicsBall.x = windowWidth - physicsBall.radius;
+        }
+        if (physicsBall.y > windowHeight - physicsBall.radius) {
+            physicsBall.y = windowHeight - physicsBall.radius;
+        }
+    }
 }); 

@@ -1,30 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rodrigo de Sarasqueta - Full Stack Developer</title>
-    <meta name="description" content="Full Stack Developer apasionado por crear soluciones innovadoras. Especializado en React, Node.js, Python y tecnologías modernas.">
+    <title>Rodrigo de Sarasqueta - Data Analyst & ML Engineer</title>
+    <meta name="description" content="Data Analyst & ML Engineer specializing in predictive modeling, NLP, and data-driven insights.">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Cursor personalizado -->
-    <div id="cursor"></div>
-    <div id="cursor-follower"></div>
-    
-    <!-- Elemento arcoiris pequeño -->
-    <div class="rainbow-dot"></div>
-
-    <!-- Navegación -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <span>RDS</span>
-            </div>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo">RS</div>
             
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link" data-translate="nav-home">Home</a></li>
@@ -36,24 +32,13 @@
             
             <div class="nav-right">
                 <div class="language-selector">
-                    <div class="current-lang" id="current-lang">
-                        <span class="flag">🇺🇸</span>
-                        <span class="lang-code">EN</span>
-                        <span class="dropdown-arrow">▼</span>
-                    </div>
-                    <div class="lang-dropdown" id="lang-dropdown">
-                        <div class="lang-option" data-lang="en">
-                            <span class="flag">🇺🇸</span>
-                            <span class="lang-name">English</span>
-                        </div>
-                        <div class="lang-option" data-lang="es">
-                            <span class="flag">🇪🇸</span>
-                            <span class="lang-name">Español</span>
-                        </div>
-                        <div class="lang-option" data-lang="de">
-                            <span class="flag">🇩🇪</span>
-                            <span class="lang-name">Deutsch</span>
-                        </div>
+                    <button class="current-lang">
+                        🇺🇸 <span>English</span>
+                    </button>
+                    <div class="lang-dropdown">
+                        <div class="lang-option" data-lang="en">🇺🇸 English</div>
+                        <div class="lang-option" data-lang="es">🇪🇸 Español</div>
+                        <div class="lang-option" data-lang="de">🇩🇪 Deutsch</div>
                     </div>
                 </div>
                 
@@ -63,197 +48,182 @@
                     <span></span>
                 </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <!-- Sección Hero -->
+    <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-container">
             <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">
-                        <span class="greeting" data-translate="hero-greeting">Hello, I'm</span>
-                        <span class="name">Rodrigo de Sarasqueta</span>
-                        <span class="role" data-translate="hero-role">Data Analyst & ML Engineer</span>
-                    </h1>
-                    <p class="hero-description" data-translate="hero-description">
-                        Transforming data into actionable insights through machine learning and advanced analytics. 
-                        Specialized in NLP, predictive modeling, and data-driven decision making.
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="#projects" class="btn btn-primary" data-translate="hero-btn-projects">View Projects</a>
-                        <a href="mailto:rod.desarasqueta@gmail.com" class="btn btn-secondary" data-translate="hero-btn-contact">Contact Me</a>
-                        <a href="./Rodrigo de Sarasqueta - CV 2025.pdf" class="btn btn-outline" download="Rodrigo_Sarasqueta_CV_2025.pdf" data-translate="hero-btn-cv">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
-                            </svg>
-                            Download CV
-                        </a>
-                    </div>
-                </div>
-                <div class="hero-visual">
-                    <div class="floating-elements">
-                        <div class="physics-ball"></div>
-                        <div class="code-block">
-                            <span class="code-line">const developer = {</span>
-                            <span class="code-line">  name: 'Rodrigo',</span>
-                            <span class="code-line">  passion: 'coding',</span>
-                            <span class="code-line">  mission: 'innovate'</span>
-                            <span class="code-line">};</span>
-                        </div>
-                    </div>
+                <h1 class="hero-title">
+                    <span class="greeting" data-translate="hero-greeting">Hello, I'm</span>
+                    <span class="name">Rodrigo de Sarasqueta</span>
+                    <span class="role" data-translate="hero-role">Data Analyst & ML Engineer</span>
+                </h1>
+                <p class="hero-description" data-translate="hero-description">
+                    Transforming data into actionable insights through machine learning and advanced analytics. 
+                    Specialized in NLP, predictive modeling, and data-driven decision making.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary" data-translate="hero-btn-projects">View Projects</a>
+                    <a href="#contact" class="btn btn-secondary" data-translate="hero-btn-contact">Contact Me</a>
+                    <a href="Rodrigo de Sarasqueta - CV 2025.pdf" class="btn btn-outline" download data-translate="hero-btn-cv">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download CV
+                    </a>
                 </div>
             </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="scroll-arrow"></div>
+            
+            <div class="hero-visual">
+                <div class="code-block">
+                    <div class="typing-text">const dataAnalyst = {
+    name: "Rodrigo",
+    skills: ["Python", "ML", "NLP"],
+    passion: "insights"
+};</div>
+                </div>
+                
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+            </div>
         </div>
     </section>
 
-    <!-- Sobre mí -->
-    <section id="about" class="about">
+    <!-- About Section -->
+    <section id="about" class="section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title" data-translate="about-title">About Me</h2>
-                <p class="section-subtitle" data-translate="about-subtitle">Get to know who I am and what drives my passion for development</p>
+                <p class="section-subtitle" data-translate="about-subtitle">Passionate about transforming data into meaningful insights</p>
             </div>
+            
             <div class="about-content">
                 <div class="about-text">
-                    <div class="about-card">
-                        <h3>¿Quién soy?</h3>
-                        <p>
-                            Soy un desarrollador full stack con una pasión genuina por la tecnología y la innovación. 
-                            Me especializo en crear aplicaciones web y móviles que no solo funcionan perfectamente, 
-                            sino que también ofrecen experiencias excepcionales para los usuarios.
-                        </p>
-                    </div>
-                    <div class="about-card">
-                        <h3>Mi enfoque</h3>
-                        <p>
-                            Creo en el poder del código limpio, el diseño intuitivo y la colaboración efectiva. 
-                            Cada proyecto para mí es una oportunidad de aprender algo nuevo y crear algo increíble.
-                        </p>
-                    </div>
-                    <div class="about-card">
-                        <h3>Mi misión</h3>
-                        <p>
-                            Transformar ideas complejas en soluciones simples y elegantes. 
-                            Mi objetivo es ayudar a empresas y emprendedores a alcanzar sus metas tecnológicas.
-                        </p>
-                    </div>
+                    <p>As a Data Analyst and Machine Learning Engineer, I specialize in extracting meaningful insights from complex datasets and building predictive models that drive business decisions. My expertise spans statistical analysis, natural language processing, and advanced machine learning techniques.</p>
+                    
+                    <p>I'm passionate about turning raw data into actionable intelligence, whether it's through exploratory data analysis, building classification models, or developing automated data pipelines. My approach combines technical rigor with business understanding to deliver solutions that make a real impact.</p>
                 </div>
-                <div class="about-stats">
+                
+                <div class="stats">
                     <div class="stat-item">
-                        <span class="stat-number" data-target="50">0</span>
-                        <span class="stat-label">Proyectos Completados</span>
+                        <span class="stat-number" data-target="3">3</span>
+                        <span class="stat-label">Years Experience</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" data-target="3">0</span>
-                        <span class="stat-label">Años de Experiencia</span>
+                        <span class="stat-number" data-target="15">15</span>
+                        <span class="stat-label">ML Models Built</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" data-target="25">0</span>
-                        <span class="stat-label">Clientes Satisfechos</span>
+                        <span class="stat-number" data-target="25">25</span>
+                        <span class="stat-label">Data Projects</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="8">8</span>
+                        <span class="stat-label">Technologies Mastered</span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Proyectos -->
-    <section id="projects" class="projects">
+    <!-- Projects Section -->
+    <section id="projects" class="section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title" data-translate="projects-title">Featured Projects</h2>
-                <p class="section-subtitle" data-translate="projects-subtitle">A showcase of my most recent and impactful work</p>
+                <p class="section-subtitle" data-translate="projects-subtitle">Some of my recent work in data science and machine learning</p>
             </div>
+            
             <div class="projects-grid">
-                <div class="project-card" data-tech="React,Node.js,MongoDB">
-                    <div class="project-image">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                    </svg>
-                                </a>
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">Custom Text Classifier</h3>
+                        <h3 class="project-title">Customer Churn Prediction</h3>
                         <p class="project-description">
-                            ML model for automated text cleaning using NLP techniques. Published on Towards Data Science.
+                            Machine learning model to predict customer churn using ensemble methods. 
+                            Achieved 89% accuracy with Random Forest and feature engineering techniques.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
-                            <span class="tech-tag">NLP</span>
                             <span class="tech-tag">Scikit-learn</span>
+                            <span class="tech-tag">Pandas</span>
+                            <span class="tech-tag">XGBoost</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                                GitHub
+                            </a>
+                            <a href="#" class="project-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15,3 21,3 21,9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                                Live Demo
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <div class="project-card" data-tech="Vue,Python,PostgreSQL">
-                    <div class="project-image">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                    </svg>
-                                </a>
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">Azure Cosmos DB Analytics</h3>
+                        <h3 class="project-title">Sentiment Analysis Dashboard</h3>
                         <p class="project-description">
-                            Advanced analytics and ML integration for Azure Cosmos DB with Power BI connectors and real-time insights.
+                            Real-time sentiment analysis of social media data using NLP techniques. 
+                            Built with Streamlit and deployed for interactive data visualization.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Azure ML</span>
-                            <span class="tech-tag">Power BI</span>
+                            <span class="tech-tag">NLTK</span>
+                            <span class="tech-tag">Streamlit</span>
+                            <span class="tech-tag">TextBlob</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                                GitHub
+                            </a>
+                            <a href="#" class="project-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15,3 21,3 21,9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                </svg>
+                                Live Demo
+                            </a>
                         </div>
                     </div>
                 </div>
-
-                <div class="project-card" data-tech="React Native,Firebase,TypeScript">
-                    <div class="project-image">
-                        <div class="project-overlay">
-                            <div class="project-links">
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                    </svg>
-                                </a>
-                                <a href="#" class="project-link">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                
+                <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">HR Resume Analysis System</h3>
+                        <h3 class="project-title">Sales Forecasting Model</h3>
                         <p class="project-description">
-                            Data-driven HR system using NLP and ML for automated resume analysis and candidate ranking.
+                            Time series forecasting model for retail sales prediction using ARIMA and LSTM. 
+                            Integrated with automated reporting system for business stakeholders.
                         </p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
-                            <span class="tech-tag">PDF Mining</span>
-                            <span class="tech-tag">ML</span>
+                            <span class="tech-tag">TensorFlow</span>
+                            <span class="tech-tag">Statsmodels</span>
+                            <span class="tech-tag">Plotly</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                                </svg>
+                                GitHub
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -261,32 +231,21 @@
         </div>
     </section>
 
-    <!-- Skills -->
-    <section id="skills" class="skills">
+    <!-- Skills Section -->
+    <section id="skills" class="section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" data-translate="skills-title">Technologies & Skills</h2>
-                <p class="section-subtitle" data-translate="skills-subtitle">The tools I use to create amazing solutions</p>
+                <h2 class="section-title" data-translate="skills-title">Technical Skills</h2>
+                <p class="section-subtitle" data-translate="skills-subtitle">Technologies and tools I work with</p>
             </div>
+            
             <div class="skills-container">
                 <div class="skills-grid">
-                    <div class="skill-item" data-level="95">
+                    <div class="skill-item" data-level="92">
                         <div class="skill-header">
                             <div class="skill-info">
                                 <div class="skill-icon">🐍</div>
                                 <span class="skill-name">Python</span>
-                            </div>
-                            <span class="skill-percentage">95%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress"></div>
-                        </div>
-                    </div>
-                    <div class="skill-item" data-level="92">
-                        <div class="skill-header">
-                            <div class="skill-info">
-                                <div class="skill-icon">🤖</div>
-                                <span class="skill-name">Machine Learning</span>
                             </div>
                             <span class="skill-percentage">92%</span>
                         </div>
@@ -294,23 +253,12 @@
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-item" data-level="90">
-                        <div class="skill-header">
-                            <div class="skill-info">
-                                <div class="skill-icon">📊</div>
-                                <span class="skill-name">Data Analysis</span>
-                            </div>
-                            <span class="skill-percentage">90%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress"></div>
-                        </div>
-                    </div>
+                    
                     <div class="skill-item" data-level="88">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🧠</div>
-                                <span class="skill-name">NLP</span>
+                                <div class="skill-icon">🤖</div>
+                                <span class="skill-name">Machine Learning</span>
                             </div>
                             <span class="skill-percentage">88%</span>
                         </div>
@@ -318,11 +266,12 @@
                             <div class="skill-progress"></div>
                         </div>
                     </div>
+                    
                     <div class="skill-item" data-level="85">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">📈</div>
-                                <span class="skill-name">Statistical Modeling</span>
+                                <div class="skill-icon">📊</div>
+                                <span class="skill-name">Data Analysis</span>
                             </div>
                             <span class="skill-percentage">85%</span>
                         </div>
@@ -330,35 +279,38 @@
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-item" data-level="83">
+                    
+                    <div class="skill-item" data-level="82">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🐘</div>
+                                <div class="skill-icon">💬</div>
+                                <span class="skill-name">NLP</span>
+                            </div>
+                            <span class="skill-percentage">82%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item" data-level="90">
+                        <div class="skill-header">
+                            <div class="skill-info">
+                                <div class="skill-icon">🗃️</div>
                                 <span class="skill-name">SQL</span>
                             </div>
-                            <span class="skill-percentage">83%</span>
+                            <span class="skill-percentage">90%</span>
                         </div>
                         <div class="skill-bar">
                             <div class="skill-progress"></div>
                         </div>
                     </div>
-                    <div class="skill-item" data-level="80">
-                        <div class="skill-header">
-                            <div class="skill-info">
-                                <div class="skill-icon">☁️</div>
-                                <span class="skill-name">Azure ML</span>
-                            </div>
-                            <span class="skill-percentage">80%</span>
-                        </div>
-                        <div class="skill-bar">
-                            <div class="skill-progress"></div>
-                        </div>
-                    </div>
+                    
                     <div class="skill-item" data-level="78">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">📊</div>
-                                <span class="skill-name">Power BI</span>
+                                <div class="skill-icon">📈</div>
+                                <span class="skill-name">Statistical Modeling</span>
                             </div>
                             <span class="skill-percentage">78%</span>
                         </div>
@@ -366,81 +318,77 @@
                             <div class="skill-progress"></div>
                         </div>
                     </div>
+                    
+                    <div class="skill-item" data-level="75">
+                        <div class="skill-header">
+                            <div class="skill-info">
+                                <div class="skill-icon">📊</div>
+                                <span class="skill-name">Tableau</span>
+                            </div>
+                            <span class="skill-percentage">75%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-item" data-level="80">
+                        <div class="skill-header">
+                            <div class="skill-info">
+                                <div class="skill-icon">🧠</div>
+                                <span class="skill-name">Deep Learning</span>
+                            </div>
+                            <span class="skill-percentage">80%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-progress"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contacto -->
-    <section id="contact" class="contact">
+    <!-- Contact Section -->
+    <section id="contact" class="section">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title" data-translate="contact-title">Get In Touch</h2>
-                <p class="section-subtitle" data-translate="contact-subtitle">Let's work together to bring your ideas to life</p>
+                <p class="section-subtitle" data-translate="contact-subtitle">Let's work together to bring your data projects to life</p>
             </div>
+            
             <div class="contact-container">
                 <div class="contact-info">
                     <div class="contact-item">
                         <div class="contact-icon">📧</div>
                         <div class="contact-details">
                             <h4>Email</h4>
-                            <a href="mailto:rod.desarasqueta@gmail.com">rod.desarasqueta@gmail.com</a>
+                            <a href="mailto:uptowork@rodrigo.com">uptowork@rodrigo.com</a>
                         </div>
                     </div>
+                    
                     <div class="contact-item">
                         <div class="contact-icon">💼</div>
                         <div class="contact-details">
                             <h4>LinkedIn</h4>
-                            <a href="https://www.linkedin.com/in/rodrigo-dev/" target="_blank">linkedin.com/in/rodrigo-dev</a>
+                            <a href="https://linkedin.com/in/rodrigo-sarasqueta" target="_blank">linkedin.com/in/rodrigo-sarasqueta</a>
                         </div>
                     </div>
+                    
                     <div class="contact-item">
-                        <div class="contact-icon">⚡</div>
+                        <div class="contact-icon">🔗</div>
                         <div class="contact-details">
                             <h4>GitHub</h4>
                             <a href="https://github.com/rodrigo-ds4" target="_blank">github.com/rodrigo-ds4</a>
                         </div>
                     </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">💎</div>
-                        <div class="contact-details">
-                            <h4>Upwork</h4>
-                            <a href="#" target="_blank">upwork.com/freelancers/rodrigo-ds</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Tu nombre" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Tu email" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="message" name="message" placeholder="Cuéntame sobre tu proyecto..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
-                    </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2025 Rodrigo de Sarasqueta. Hecho con ❤️ y mucho café.</p>
-                <div class="footer-links">
-                    <a href="#home">Inicio</a>
-                    <a href="#about">Sobre mí</a>
-                    <a href="#projects">Proyectos</a>
-                    <a href="#contact">Contacto</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Rainbow dot element -->
+    <div class="rainbow-dot"></div>
 
     <script src="script.js"></script>
 </body>
