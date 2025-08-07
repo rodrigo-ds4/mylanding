@@ -298,96 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('load', updateActiveNavLink);
 });
 
-// 🚨 SISTEMA DE IDIOMAS ULTRA DIRECTO - GARANTIZADO QUE FUNCIONA
-console.log('🔥 CARGANDO SISTEMA DE IDIOMAS...');
 
-// Variables globales
-window.currentLang = 'en';
-window.languages = ['en', 'es', 'de'];
-window.langLabels = { 'en': 'EN', 'es': 'ES', 'de': 'DE' };
-
-// Traducciones
-window.translations = {
-    en: {
-        'nav-home': 'Home', 'nav-about': 'About', 'nav-projects': 'Projects', 'nav-skills': 'Skills', 'nav-contact': 'Contact',
-        'hero-greeting': "Hello, I'm", 'hero-role': 'Backend & ML Engineer',
-        'hero-description': 'Specialized in microservices, AI agents, and data science solutions. Creating innovative systems for SMEs with LangChain, ML models, and scalable architectures.',
-        'hero-btn-projects': 'View Projects', 'hero-btn-contact': 'Contact Me', 'hero-btn-cv': 'Download CV',
-        'about-title': 'About Me', 'about-subtitle': 'Backend specialist focused on creative solutions for small and medium enterprises',
-        'projects-title': 'Featured Projects', 'projects-subtitle': 'Creative solutions combining backend, ML, and AI agents for SMEs',
-        'skills-title': 'Technical Skills', 'skills-subtitle': 'Backend, microservices, ML, and AI agent technologies',
-        'contact-title': 'Get In Touch', 'contact-subtitle': "Let's create innovative solutions for your business"
-    },
-    es: {
-        'nav-home': 'Inicio', 'nav-about': 'Acerca', 'nav-projects': 'Proyectos', 'nav-skills': 'Habilidades', 'nav-contact': 'Contacto',
-        'hero-greeting': 'Hola, soy', 'hero-role': 'Ingeniero Backend & ML',
-        'hero-description': 'Especializado en microservicios, agentes IA y soluciones de data science. Creando sistemas innovadores para PyMEs con LangChain, modelos ML y arquitecturas escalables.',
-        'hero-btn-projects': 'Ver Proyectos', 'hero-btn-contact': 'Contactarme', 'hero-btn-cv': 'Descargar CV',
-        'about-title': 'Sobre Mí', 'about-subtitle': 'Especialista en backend enfocado en soluciones creativas para pequeñas y medianas empresas',
-        'projects-title': 'Proyectos Destacados', 'projects-subtitle': 'Soluciones creativas combinando backend, ML y agentes IA para PyMEs',
-        'skills-title': 'Habilidades Técnicas', 'skills-subtitle': 'Tecnologías de backend, microservicios, ML y agentes IA',
-        'contact-title': 'Contacto', 'contact-subtitle': 'Creemos soluciones innovadoras para tu negocio'
-    },
-    de: {
-        'nav-home': 'Startseite', 'nav-about': 'Über mich', 'nav-projects': 'Projekte', 'nav-skills': 'Fähigkeiten', 'nav-contact': 'Kontakt',
-        'hero-greeting': 'Hallo, ich bin', 'hero-role': 'Backend & ML Ingenieur',
-        'hero-description': 'Spezialisiert auf Microservices, KI-Agenten und Data Science-Lösungen. Entwicklung innovativer Systeme für KMU mit LangChain, ML-Modellen und skalierbaren Architekturen.',
-        'hero-btn-projects': 'Projekte ansehen', 'hero-btn-contact': 'Kontakt aufnehmen', 'hero-btn-cv': 'CV herunterladen',
-        'about-title': 'Über Mich', 'about-subtitle': 'Backend-Spezialist mit Fokus auf kreative Lösungen für kleine und mittlere Unternehmen',
-        'projects-title': 'Ausgewählte Projekte', 'projects-subtitle': 'Kreative Lösungen, die Backend, ML und KI-Agenten für KMU kombinieren',
-        'skills-title': 'Technische Fähigkeiten', 'skills-subtitle': 'Backend-, Microservices-, ML- und KI-Agent-Technologien',
-        'contact-title': 'Kontakt aufnehmen', 'contact-subtitle': 'Lassen Sie uns innovative Lösungen für Ihr Unternehmen schaffen'
-    }
-};
-
-// FUNCIÓN PRINCIPAL - ACCESIBLE GLOBALMENTE
-window.switchLanguage = function() {
-    console.log('🚨 FUNCIÓN EJECUTADA! Current lang:', window.currentLang);
-    
-    // Siguiente idioma
-    const currentIndex = window.languages.indexOf(window.currentLang);
-    const nextIndex = (currentIndex + 1) % window.languages.length;
-    const newLang = window.languages[nextIndex];
-    
-    console.log('➡️ Cambiando a:', newLang);
-    window.currentLang = newLang;
-    
-    // Actualizar botón
-    const btn = document.getElementById('current-language');
-    if (btn) {
-        btn.textContent = window.langLabels[newLang];
-        console.log('🔄 Botón actualizado a:', window.langLabels[newLang]);
-    } else {
-        console.error('❌ NO SE ENCONTRÓ EL BOTÓN!');
-    }
-    
-    // Traducir elementos
-    const elements = document.querySelectorAll('[data-translate]');
-    console.log('📝 Elementos encontrados:', elements.length);
-    
-    elements.forEach(el => {
-        const key = el.getAttribute('data-translate');
-        if (window.translations[newLang] && window.translations[newLang][key]) {
-            el.textContent = window.translations[newLang][key];
-            console.log(`✅ ${key} → ${window.translations[newLang][key]}`);
-        }
-    });
-    
-    // Guardar
-    localStorage.setItem('preferred-language', newLang);
-    console.log('💾 Guardado en localStorage');
-    
-    // Cambiar color del botón para confirmar que funciona
-    const langBtn = document.getElementById('language-button');
-    if (langBtn) {
-        langBtn.style.background = newLang === 'en' ? 'red' : newLang === 'es' ? 'green' : 'blue';
-    }
-    
-    console.log('🎉 ¡CAMBIO COMPLETADO!');
-};
-
-console.log('✅ Sistema de idiomas cargado. Función disponible globalmente.');
-console.log('🧪 Prueba: window.switchLanguage()');
 
 // Efecto de partículas en el hero
 class Particle {
@@ -799,6 +710,87 @@ if ('serviceWorker' in navigator) {
 let currentLanguage = 'en';
 let particles = [];
 let rainbowBall;
+
+// 🚨 DEFINIR FUNCIÓN DE IDIOMAS INMEDIATAMENTE - ANTES DE TODO
+window.currentLang = 'en';
+window.languages = ['en', 'es', 'de'];
+window.langLabels = { 'en': 'EN', 'es': 'ES', 'de': 'DE' };
+
+window.translations = {
+    en: {
+        'nav-home': 'Home', 'nav-about': 'About', 'nav-projects': 'Projects', 'nav-skills': 'Skills', 'nav-contact': 'Contact',
+        'hero-greeting': "Hello, I'm", 'hero-role': 'Backend & ML Engineer',
+        'hero-description': 'Specialized in microservices, AI agents, and data science solutions. Creating innovative systems for SMEs with LangChain, ML models, and scalable architectures.',
+        'hero-btn-projects': 'View Projects', 'hero-btn-contact': 'Contact Me', 'hero-btn-cv': 'Download CV',
+        'about-title': 'About Me', 'about-subtitle': 'Backend specialist focused on creative solutions for small and medium enterprises',
+        'projects-title': 'Featured Projects', 'projects-subtitle': 'Creative solutions combining backend, ML, and AI agents for SMEs',
+        'skills-title': 'Technical Skills', 'skills-subtitle': 'Backend, microservices, ML, and AI agent technologies',
+        'contact-title': 'Get In Touch', 'contact-subtitle': "Let's create innovative solutions for your business"
+    },
+    es: {
+        'nav-home': 'Inicio', 'nav-about': 'Acerca', 'nav-projects': 'Proyectos', 'nav-skills': 'Habilidades', 'nav-contact': 'Contacto',
+        'hero-greeting': 'Hola, soy', 'hero-role': 'Ingeniero Backend & ML',
+        'hero-description': 'Especializado en microservicios, agentes IA y soluciones de data science. Creando sistemas innovadores para PyMEs con LangChain, modelos ML y arquitecturas escalables.',
+        'hero-btn-projects': 'Ver Proyectos', 'hero-btn-contact': 'Contactarme', 'hero-btn-cv': 'Descargar CV',
+        'about-title': 'Sobre Mí', 'about-subtitle': 'Especialista en backend enfocado en soluciones creativas para pequeñas y medianas empresas',
+        'projects-title': 'Proyectos Destacados', 'projects-subtitle': 'Soluciones creativas combinando backend, ML y agentes IA para PyMEs',
+        'skills-title': 'Habilidades Técnicas', 'skills-subtitle': 'Tecnologías de backend, microservicios, ML y agentes IA',
+        'contact-title': 'Contacto', 'contact-subtitle': 'Creemos soluciones innovadoras para tu negocio'
+    },
+    de: {
+        'nav-home': 'Startseite', 'nav-about': 'Über mich', 'nav-projects': 'Projekte', 'nav-skills': 'Fähigkeiten', 'nav-contact': 'Kontakt',
+        'hero-greeting': 'Hallo, ich bin', 'hero-role': 'Backend & ML Ingenieur',
+        'hero-description': 'Spezialisiert auf Microservices, KI-Agenten und Data Science-Lösungen. Entwicklung innovativer Systeme für KMU mit LangChain, ML-Modellen und skalierbaren Architekturen.',
+        'hero-btn-projects': 'Projekte ansehen', 'hero-btn-contact': 'Kontakt aufnehmen', 'hero-btn-cv': 'CV herunterladen',
+        'about-title': 'Über Mich', 'about-subtitle': 'Backend-Spezialist mit Fokus auf kreative Lösungen für kleine und mittlere Unternehmen',
+        'projects-title': 'Ausgewählte Projekte', 'projects-subtitle': 'Kreative Lösungen, die Backend, ML und KI-Agenten für KMU kombinieren',
+        'skills-title': 'Technische Fähigkeiten', 'skills-subtitle': 'Backend-, Microservices-, ML- und KI-Agent-Technologien',
+        'contact-title': 'Kontakt aufnehmen', 'contact-subtitle': 'Lassen Sie uns innovative Lösungen für Ihr Unternehmen schaffen'
+    }
+};
+
+// FUNCIÓN PRINCIPAL - DISPONIBLE INMEDIATAMENTE
+window.switchLanguage = function() {
+    console.log('🚨 FUNCIÓN EJECUTADA! Current lang:', window.currentLang);
+    
+    const currentIndex = window.languages.indexOf(window.currentLang);
+    const nextIndex = (currentIndex + 1) % window.languages.length;
+    const newLang = window.languages[nextIndex];
+    
+    console.log('➡️ Cambiando a:', newLang);
+    window.currentLang = newLang;
+    
+    const btn = document.getElementById('current-language');
+    if (btn) {
+        btn.textContent = window.langLabels[newLang];
+        console.log('🔄 Botón actualizado a:', window.langLabels[newLang]);
+    } else {
+        console.error('❌ NO SE ENCONTRÓ EL BOTÓN!');
+    }
+    
+    const elements = document.querySelectorAll('[data-translate]');
+    console.log('📝 Elementos encontrados:', elements.length);
+    
+    elements.forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (window.translations[newLang] && window.translations[newLang][key]) {
+            el.textContent = window.translations[newLang][key];
+            console.log(`✅ ${key} → ${window.translations[newLang][key]}`);
+        }
+    });
+    
+    localStorage.setItem('preferred-language', newLang);
+    console.log('💾 Guardado en localStorage');
+    
+    const langBtn = document.getElementById('language-button');
+    if (langBtn) {
+        langBtn.style.background = newLang === 'en' ? 'red' : newLang === 'es' ? 'green' : 'blue';
+    }
+    
+    console.log('🎉 ¡CAMBIO COMPLETADO!');
+};
+
+console.log('✅ Función switchLanguage definida al inicio del archivo');
 
 // Clase para la pelota gigante que rebota por toda la página
 class RainbowBall {
