@@ -188,15 +188,7 @@ body::before {
     margin-right: 1rem;
 }
 
-/* --- Selector de Idiomas con Dropdown (Reconstruido) --- */
-.language-selector {
-    position: relative;
-}
-
 .lang-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--secondary-color);
     border-radius: 6px;
@@ -205,6 +197,9 @@ body::before {
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .lang-btn:hover {
@@ -212,40 +207,6 @@ body::before {
     border-color: var(--primary-color);
     transform: translateY(-2px);
 }
-
-.lang-dropdown {
-    position: absolute;
-    top: calc(100% + 5px);
-    right: 0;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    z-index: 1001;
-    display: none; /* Oculto por defecto */
-    min-width: 150px;
-}
-
-.lang-dropdown.show {
-    display: block; /* Visible cuando tiene la clase 'show' */
-}
-
-.lang-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: var(--primary-color);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease;
-}
-
-.lang-option:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-/* --- Fin del Selector de Idiomas --- */
 
 .lang-btn:active {
     transform: translateY(0);
