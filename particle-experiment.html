@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Physics Experiment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #canvas {
+            display: block;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            z-index: 100;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            margin-bottom: 5px;
+        }
+
+        .value-display {
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        .info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <h3 style="margin-bottom: 15px; font-size: 14px;">Particle Controls</h3>
+        
+        <div class="control-group">
+            <label>Particle Count</label>
+            <input type="range" id="particleCount" min="50" max="500" value="200">
+            <div class="value-display" id="particleCountValue">200</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Wave Frequency</label>
+            <input type="range" id="waveFreq" min="0.001" max="0.01" step="0.001" value="0.005">
+            <div class="value-display" id="waveFreqValue">0.005</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Wave Amplitude</label>
+            <input type="range" id="waveAmp" min="10" max="100" value="50">
+            <div class="value-display" id="waveAmpValue">50</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Speed</label>
+            <input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+            <div class="value-display" id="speedValue">1</div>
+        </div>
+        
+        <div class="control-group">
+            <label>Connection Distance</label>
+            <input type="range" id="connectionDist" min="50" max="200" value="100">
+            <div class="value-display" id="connectionDistValue">100</div>
+        </div>
+    </div>
+    
+    <div class="info">
+        <strong>Particle Physics Experiment</strong><br>
+        Synchronized particles with wave oscillations in grayscale tones.<br>
+        Adjust controls to experiment with different effects.
+    </div>
+
+    <script>
+        class ParticleSystem {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.time = 0;
+                
+                // Configuración inicial
+                this.config = {
+                    particleCount: 200,
+                    waveFrequency: 0.005,
+                    waveAmplitude: 50,
+                    speed: 1,
+                    connectionDistance: 100,
+                    baseSize: 2,
+                    maxSize: 6
+                };
+                
+                this.setupCanvas();
+                this.initParticles();
+                this.setupControls();
+                this.animate();
+            }
+            
+            setupCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                window.addEventListener('resize', () => {
+                    this.canvas.width = window.innerWidth;
+                    this.canvas.height = window.innerHeight;
+                    this.initParticles();
+                });
+            }
+            
+            initParticles() {
+                this.particles = [];
+                const cols = Math.ceil(Math.sqrt(this.config.particleCount * (this.canvas.width / this.canvas.height)));
+                const rows = Math.ceil(this.config.particleCount / cols);
+                
+                const spacingX = this.canvas.width / (cols + 1);
+                const spacingY = this.canvas.height / (rows + 1);
+                
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        if (this.particles.length >= this.config.particleCount) break;
+                        
+                        const particle = {
+                            id: this.particles.length,
+                            baseX: spacingX * (j + 1),
+                            baseY: spacingY * (i + 1),
+                            x: spacingX * (j + 1),
+                            y: spacingY * (i + 1),
+                            vx: 0,
+                            vy: 0,
+                            phase: Math.random() * Math.PI * 2,
+                            size: this.config.baseSize + Math.random() * 2,
+                            opacity: 0.3 + Math.random() * 0.7,
+                            grayTone: Math.random() * 255
+                        };
+                        
+                        this.particles.push(particle);
+                    }
+                }
+            }
+            
+            updateParticles() {
+                this.time += 0.016 * this.config.speed;
+                
+                this.particles.forEach((particle, index) => {
+                    // Movimiento ondulatorio sincronizado
+                    const waveX = Math.sin(this.time * this.config.waveFrequency + particle.phase) * this.config.waveAmplitude;
+                    const waveY = Math.cos(this.time * this.config.waveFrequency * 0.7 + particle.phase + index * 0.1) * this.config.waveAmplitude * 0.5;
+                    
+                    // Movimiento circular sutil
+                    const circularX = Math.cos(this.time * 0.001 + particle.phase) * 20;
+                    const circularY = Math.sin(this.time * 0.001 + particle.phase) * 15;
+                    
+                    // Posición final
+                    particle.x = particle.baseX + waveX + circularX;
+                    particle.y = particle.baseY + waveY + circularY;
+                    
+                    // Variación del tamaño basada en el movimiento
+                    const sizeVariation = Math.sin(this.time * 0.003 + particle.phase) * 0.5 + 0.5;
+                    particle.size = this.config.baseSize + sizeVariation * (this.config.maxSize - this.config.baseSize);
+                    
+                    // Variación del tono de gris
+                    const grayVariation = Math.sin(this.time * 0.002 + particle.phase * 2) * 0.3 + 0.7;
+                    particle.grayTone = 80 + grayVariation * 120; // Rango de grises más elegante
+                    
+                    // Variación de opacidad
+                    particle.opacity = 0.2 + (Math.sin(this.time * 0.004 + particle.phase) * 0.3 + 0.3);
+                });
+            }
+            
+            drawConnections() {
+                this.ctx.strokeStyle = 'rgba(150, 150, 150, 0.1)';
+                this.ctx.lineWidth = 0.5;
+                
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p1 = this.particles[i];
+                        const p2 = this.particles[j];
+                        
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < this.config.connectionDistance) {
+                            const alpha = (1 - distance / this.config.connectionDistance) * 0.2;
+                            this.ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`;
+                            
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(p1.x, p1.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            drawParticles() {
+                this.particles.forEach(particle => {
+                    const gray = Math.round(particle.grayTone);
+                    
+                    // Partícula principal
+                    this.ctx.fillStyle = `rgba(${gray}, ${gray}, ${gray}, ${particle.opacity})`;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    // Halo sutil
+                    const gradient = this.ctx.createRadialGradient(
+                        particle.x, particle.y, 0,
+                        particle.x, particle.y, particle.size * 3
+                    );
+                    gradient.addColorStop(0, `rgba(${gray}, ${gray}, ${gray}, ${particle.opacity * 0.3})`);
+                    gradient.addColorStop(1, `rgba(${gray}, ${gray}, ${gray}, 0)`);
+                    
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.beginPath();
+                    this.ctx.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+            }
+            
+            render() {
+                // Efecto de desvanecimiento sutil
+                this.ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.drawConnections();
+                this.drawParticles();
+            }
+            
+            setupControls() {
+                const controls = {
+                    particleCount: document.getElementById('particleCount'),
+                    waveFreq: document.getElementById('waveFreq'),
+                    waveAmp: document.getElementById('waveAmp'),
+                    speed: document.getElementById('speed'),
+                    connectionDist: document.getElementById('connectionDist')
+                };
+                
+                Object.keys(controls).forEach(key => {
+                    const control = controls[key];
+                    const valueDisplay = document.getElementById(key + 'Value');
+                    
+                    control.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        this.config[key] = value;
+                        valueDisplay.textContent = value;
+                        
+                        if (key === 'particleCount') {
+                            this.initParticles();
+                        }
+                    });
+                });
+            }
+            
+            animate() {
+                this.updateParticles();
+                this.render();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Inicializar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('canvas');
+            new ParticleSystem(canvas);
+        });
+    </script>
+</body>
+</html> 

@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <canvas id="bg-canvas"></canvas>
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
@@ -101,28 +102,15 @@
             
             <div class="about-content">
                 <div class="about-text">
-                    <p>As a Backend & ML Engineer, I specialize in building scalable microservices architectures and intelligent AI agents that solve real business problems. My passion lies in creating innovative solutions specifically tailored for small and medium enterprises (SMEs).</p>
-                    
-                    <p>I combine backend expertise with machine learning and AI agent development using tools like LangChain to deliver creative, cost-effective solutions that help SMEs compete with larger companies through smart automation and data-driven insights.</p>
+                    <p data-translate="about-p1">Backend & ML Engineer focused on Python microservices and AI agents for SMEs. I design pragmatic, maintainable systems aligned with real business needs.</p>
+                    <p data-translate="about-p2">I work with FastAPI, Docker, LangChain and common ML tooling to build reliable backends, automate processes and enable data-driven flows without over-engineering.</p>
                 </div>
                 
                 <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="4">4</span>
-                        <span class="stat-label">Years Experience</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="20">20</span>
-                        <span class="stat-label">SME Projects</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="12">12</span>
-                        <span class="stat-label">AI Agents Built</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" data-target="15">15</span>
-                        <span class="stat-label">Microservices</span>
-                    </div>
+                    <div class="stat-item"><span class="stat-label" data-translate="stat-backend">Backend (Python)</span></div>
+                    <div class="stat-item"><span class="stat-label" data-translate="stat-microservices">Microservices</span></div>
+                    <div class="stat-item"><span class="stat-label" data-translate="stat-agents">AI Agents</span></div>
+                    <div class="stat-item"><span class="stat-label" data-translate="stat-ml">Machine Learning</span></div>
                 </div>
             </div>
         </div>
@@ -143,10 +131,7 @@
                 <div class="project-card">
                     <div class="project-content">
                         <h3 class="project-title">Smart Customer Service Agent</h3>
-                        <p class="project-description">
-                            AI-powered customer service system using LangChain and microservices. 
-                            Automated 80% of customer inquiries for a local retail chain.
-                        </p>
+                        <p class="project-description" data-translate="proj1-desc">Customer support agent using LangChain with a Python microservices backend. Repository available on GitHub.</p>
                         <div class="project-tech">
                             <span class="tech-tag">LangChain</span>
                             <span class="tech-tag">FastAPI</span>
@@ -154,7 +139,7 @@
                             <span class="tech-tag">PostgreSQL</span>
                         </div>
                         <div class="project-links">
-                            <a href="#" class="project-link">
+                            <a href="https://github.com/rodrigo-ds4" target="_blank" class="project-link">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                                 </svg>
@@ -167,10 +152,7 @@
                 <div class="project-card">
                     <div class="project-content">
                         <h3 class="project-title">Inventory Prediction System</h3>
-                        <p class="project-description">
-                            ML-powered inventory management with automated ordering for small businesses. 
-                            Reduced stockouts by 60% and overstock by 40%.
-                        </p>
+                        <p class="project-description" data-translate="proj2-desc">Inventory management pipelines with classical ML models and event-driven components. Repository available on GitHub.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Python</span>
                             <span class="tech-tag">Scikit-learn</span>
@@ -178,7 +160,7 @@
                             <span class="tech-tag">Kafka</span>
                         </div>
                         <div class="project-links">
-                            <a href="#" class="project-link">
+                            <a href="https://github.com/rodrigo-ds4" target="_blank" class="project-link">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                                 </svg>
@@ -191,10 +173,7 @@
                 <div class="project-card">
                     <div class="project-content">
                         <h3 class="project-title">Multi-tenant SaaS Platform</h3>
-                        <p class="project-description">
-                            Scalable microservices architecture for SME management platform. 
-                            Supports 500+ businesses with automated scaling and multi-tenancy.
-                        </p>
+                        <p class="project-description" data-translate="proj3-desc">Microservices architecture patterns (auth, API gateway, messaging) with Dockerized services. Repository available on GitHub.</p>
                         <div class="project-tech">
                             <span class="tech-tag">Node.js</span>
                             <span class="tech-tag">Docker</span>
@@ -202,7 +181,7 @@
                             <span class="tech-tag">RabbitMQ</span>
                         </div>
                         <div class="project-links">
-                            <a href="#" class="project-link">
+                            <a href="https://github.com/rodrigo-ds4" target="_blank" class="project-link">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
                                 </svg>
@@ -231,7 +210,7 @@
                     <div class="skill-item" data-level="95">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🐍</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">Python</span>
                             </div>
                             <span class="skill-percentage">95%</span>
@@ -244,7 +223,7 @@
                     <div class="skill-item" data-level="92">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🏗️</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">Microservices</span>
                             </div>
                             <span class="skill-percentage">92%</span>
@@ -257,7 +236,7 @@
                     <div class="skill-item" data-level="90">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🤖</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">AI Agents</span>
                             </div>
                             <span class="skill-percentage">90%</span>
@@ -270,7 +249,7 @@
                     <div class="skill-item" data-level="88">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🦜</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">LangChain</span>
                             </div>
                             <span class="skill-percentage">88%</span>
@@ -283,7 +262,7 @@
                     <div class="skill-item" data-level="85">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🧠</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">Machine Learning</span>
                             </div>
                             <span class="skill-percentage">85%</span>
@@ -296,7 +275,7 @@
                     <div class="skill-item" data-level="87">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">⚡</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">FastAPI</span>
                             </div>
                             <span class="skill-percentage">87%</span>
@@ -309,7 +288,7 @@
                     <div class="skill-item" data-level="90">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">🐳</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">Docker</span>
                             </div>
                             <span class="skill-percentage">90%</span>
@@ -322,7 +301,7 @@
                     <div class="skill-item" data-level="83">
                         <div class="skill-header">
                             <div class="skill-info">
-                                <div class="skill-icon">📊</div>
+                                <div class="skill-icon"><svg class="mono-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/></svg></div>
                                 <span class="skill-name">Data Science</span>
                             </div>
                             <span class="skill-percentage">83%</span>
@@ -401,9 +380,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Rainbow dot element -->
-    <div class="rainbow-dot"></div>
 
     <script src="script.js"></script>
 </body>
