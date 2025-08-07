@@ -15369,6 +15369,163 @@ presiono el boton pero no ocurre nada!
 
 _**Assistant**_
 
+¡Veo que el servidor está corriendo en el puerto 3001! Vamos a hacer una prueba directa. Voy a crear una versión súper simplificada para asegurarme de que funcione:
+
+---
+
+<details><summary>Edit file: index.html</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 1, lines removed: 1
+
+```diff
+@@ -33,5 +33,5 @@
+              <div class="nav-right">
+                  <!-- SELECTOR DE IDIOMAS ULTRA SIMPLE -->
+-                 <button id="language-button" class="lang-btn" onclick="window.switchLanguage(); console.log('ONCLICK HTML EJECUTADO');" style="background: red; color: white; padding: 10px; border: 2px solid white; cursor: pointer;">
++                 <button id="language-button" class="lang-btn" onclick="alert('BOTÓN CLICKEADO!'); testFunction();" style="background: red; color: white; padding: 10px; border: 2px solid white; cursor: pointer; font-size: 16px;">
+                      🌐 <span id="current-language">EN</span>
+                  </button>
+```
+
+</details>
+
+---
+
+Ahora voy a agregar una función de prueba súper simple al inicio del JavaScript:
+
+---
+
+<details><summary>Edit file: script.js</summary>
+
+undefined
+
+**Chunk 1**
+Lines added: 22, lines removed: undefined
+
+```diff
+@@ -711,4 +711,26 @@
+  let particles = [];
+  let rainbowBall;
++ 
++ // 🚨 FUNCIÓN DE PRUEBA SÚPER SIMPLE
++ window.testFunction = function() {
++     console.log('🎉 FUNCIÓN DE PRUEBA EJECUTADA!');
++     alert('¡LA FUNCIÓN JAVASCRIPT FUNCIONA!');
++     
++     // Cambiar color del botón para confirmar
++     const btn = document.getElementById('language-button');
++     if (btn) {
++         btn.style.background = btn.style.background === 'red' ? 'green' : 'red';
++         console.log('✅ Color del botón cambiado');
++     }
++     
++     // Cambiar texto
++     const langSpan = document.getElementById('current-language');
++     if (langSpan) {
++         langSpan.textContent = langSpan.textContent === 'EN' ? 'ES' : 'EN';
++         console.log('✅ Texto cambiado');
++     }
++ };
++ 
++ console.log('🔥 FUNCIÓN DE PRUEBA CARGADA - testFunction disponible');
+  
+  // 🚨 DEFINIR FUNCIÓN DE IDIOMAS INMEDIATAMENTE - ANTES DE TODO
+```
+
+</details>
+
+---
+
+Ahora voy a hacer un commit rápido y probar:
+
+---
+
+```bash
+git add . && git commit -m "🧪 TEST: Simple Button Function to Debug Issue" && git push origin main
+```
+
+```
+rotpando@MBPdeRodrigo2 landing % git add . && git commit -m "<0001f9ea> TEST: Simple Button Function to Debu
+g Issue" && git push origin main git add . && git commit -m "           TEST: Simple Button Function to Debu
+g Issue" && git push origin main
+[main 981b046] 🧪 TEST: Simple Button Function to Debug Issue
+ 3 files changed, 356 insertions(+), 1 deletion(-)
+Enumerating objects: 13, done.
+Counting objects: 100% (13/13), done.
+Delta compression using up to 11 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 3.58 KiB | 1.79 MiB/s, done.
+Total 7 (delta 4), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (4/4), completed with 4 local objects.
+To https://github.com/rodrigo-ds4/mylanding.git
+   90072c3..981b046  main -> main
+rotpando@MBPdeRodrigo2 landing %
+```
+
+---
+
+¡**PERFECTO! 🧪 AHORA VAMOS A PROBAR PASO A PASO**
+
+## 🎯 **Instrucciones de Prueba Específicas:**
+
+1. **Ve a tu navegador** y abre: `http://localhost:3001`
+
+2. **Busca el botón ROJO** en la esquina superior derecha (🌐 EN)
+
+3. **Haz click en el botón**
+
+4. **Deberías ver DOS alertas**:
+   - Primera: "BOTÓN CLICKEADO!"
+   - Segunda: "¡LA FUNCIÓN JAVASCRIPT FUNCIONA!"
+
+5. **Después de cerrar las alertas**:
+   - El botón debería cambiar de ROJO a VERDE
+   - El texto debería cambiar de "EN" a "ES"
+
+## 🔍 **Si NO ves las alertas:**
+
+Significa que hay un problema con el onclick del HTML. En ese caso:
+
+1. **Abre DevTools** (F12)
+2. **Ve a Console**
+3. **Escribe manualmente**: `testFunction()`
+4. **Presiona Enter**
+
+## 🔧 **Si las alertas SÍ aparecen:**
+
+¡Perfecto! Significa que el sistema funciona. Entonces cambiaremos la función de prueba por la función real de idiomas.
+
+## 📱 **¿Qué deberías ver exactamente?**
+
+- **Botón visible**: Grande, rojo, con 🌐 EN
+- **Al hacer click**: Dos alertas consecutivas
+- **Después**: Botón verde con "ES"
+
+**¡Dime qué pasa cuando haces click!** 🚀
+
+¿Aparecen las alertas? ¿Cambia el botón de color? ¿O no pasa absolutamente nada?
+
+---
+
+_**User**_
+
+aparecio boton clickeado pero no cambio de color el boton
+
+---
+
+_**Assistant**_
+
+¡Perfecto! 🎉 **¡El botón SÍ funciona!** El problema es que la segunda función no se está ejecutando. Vamos a arreglar esto:
+
+---
+
+
+
+---
+
 
 
 ---

@@ -714,21 +714,42 @@ let rainbowBall;
 // 🚨 FUNCIÓN DE PRUEBA SÚPER SIMPLE
 window.testFunction = function() {
     console.log('🎉 FUNCIÓN DE PRUEBA EJECUTADA!');
-    alert('¡LA FUNCIÓN JAVASCRIPT FUNCIONA!');
     
     // Cambiar color del botón para confirmar
     const btn = document.getElementById('language-button');
+    console.log('🔍 Botón encontrado:', !!btn);
+    
     if (btn) {
-        btn.style.background = btn.style.background === 'red' ? 'green' : 'red';
-        console.log('✅ Color del botón cambiado');
+        const currentBg = btn.style.background;
+        console.log('🎨 Color actual:', currentBg);
+        
+        if (currentBg === 'red' || currentBg === '') {
+            btn.style.background = 'green';
+            console.log('✅ Cambiado a VERDE');
+        } else {
+            btn.style.background = 'red';
+            console.log('✅ Cambiado a ROJO');
+        }
     }
     
     // Cambiar texto
     const langSpan = document.getElementById('current-language');
+    console.log('🔍 Span encontrado:', !!langSpan);
+    
     if (langSpan) {
-        langSpan.textContent = langSpan.textContent === 'EN' ? 'ES' : 'EN';
-        console.log('✅ Texto cambiado');
+        const currentText = langSpan.textContent;
+        console.log('📝 Texto actual:', currentText);
+        
+        if (currentText === 'EN') {
+            langSpan.textContent = 'ES';
+            console.log('✅ Cambiado a ES');
+        } else {
+            langSpan.textContent = 'EN';
+            console.log('✅ Cambiado a EN');
+        }
     }
+    
+    alert('¡Función ejecutada! Revisa la consola para logs.');
 };
 
 console.log('🔥 FUNCIÓN DE PRUEBA CARGADA - testFunction disponible');
