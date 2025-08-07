@@ -716,8 +716,8 @@ const translations = {
         
         // Hero Section
         'hero-greeting': "Hello, I'm",
-        'hero-role': 'Full Stack Developer',
-        'hero-description': 'Passionate developer creating unique digital experiences. Specialized in transforming ideas into innovative technological solutions.',
+        'hero-role': 'Data Analyst & ML Engineer',
+        'hero-description': 'Transforming data into actionable insights through machine learning and advanced analytics. Specialized in NLP, predictive modeling, and data-driven decision making.',
         'hero-btn-projects': 'View Projects',
         'hero-btn-contact': 'Contact Me',
         'hero-btn-cv': 'Download CV',
@@ -748,8 +748,8 @@ const translations = {
         
         // Hero Section
         'hero-greeting': 'Hola, soy',
-        'hero-role': 'Desarrollador Full Stack',
-        'hero-description': 'Desarrollador apasionado por crear experiencias digitales únicas. Especializado en transformar ideas en soluciones tecnológicas innovadoras.',
+        'hero-role': 'Analista de Datos e Ingeniero ML',
+        'hero-description': 'Transformando datos en insights accionables a través de machine learning y análisis avanzado. Especializado en NLP, modelado predictivo y toma de decisiones basada en datos.',
         'hero-btn-projects': 'Ver Proyectos',
         'hero-btn-contact': 'Contactarme',
         'hero-btn-cv': 'Descargar CV',
@@ -780,8 +780,8 @@ const translations = {
         
         // Hero Section
         'hero-greeting': 'Hallo, ich bin',
-        'hero-role': 'Full Stack Entwickler',
-        'hero-description': 'Leidenschaftlicher Entwickler, der einzigartige digitale Erfahrungen schafft. Spezialisiert darauf, Ideen in innovative Technologielösungen zu verwandeln.',
+        'hero-role': 'Datenanalyst & ML Ingenieur',
+        'hero-description': 'Verwandle Daten in umsetzbare Erkenntnisse durch maschinelles Lernen und erweiterte Analytik. Spezialisiert auf NLP, prädiktive Modellierung und datengesteuerte Entscheidungsfindung.',
         'hero-btn-projects': 'Projekte ansehen',
         'hero-btn-contact': 'Kontakt aufnehmen',
         'hero-btn-cv': 'CV herunterladen',
