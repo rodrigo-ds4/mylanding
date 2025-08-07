@@ -31,10 +31,17 @@
             </ul>
             
             <div class="nav-right">
-                <!-- Botón de Idioma Definitivo -->
-                <button id="language-button" class="lang-btn">
-                    🌐 <span id="current-language">EN</span>
-                </button>
+                <!-- Selector de Idiomas con Dropdown (Reconstruido) -->
+                <div id="language-selector" class="language-selector">
+                    <button id="language-button" class="lang-btn">
+                        🌐 <span id="current-language">EN</span>
+                    </button>
+                    <div id="language-dropdown" class="lang-dropdown">
+                        <a href="#" class="lang-option" data-lang="en">🇺🇸 English</a>
+                        <a href="#" class="lang-option" data-lang="es">🇪🇸 Español</a>
+                        <a href="#" class="lang-option" data-lang="de">🇩🇪 Deutsch</a>
+                    </div>
+                </div>
                 
                 <div class="hamburger">
                     <span></span>
@@ -142,8 +149,8 @@
             <div class="projects-grid">
                 <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">Smart Customer Service Agent</h3>
-                        <p class="project-description">
+                        <h3 class="project-title" data-translate="project1-title">Smart Customer Service Agent</h3>
+                        <p class="project-description" data-translate="project1-desc">
                             AI-powered customer service system using LangChain and microservices. 
                             Automated 80% of customer inquiries for a local retail chain.
                         </p>
@@ -166,8 +173,8 @@
                 
                 <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">Inventory Prediction System</h3>
-                        <p class="project-description">
+                        <h3 class="project-title" data-translate="project2-title">Inventory Prediction System</h3>
+                        <p class="project-description" data-translate="project2-desc">
                             ML-powered inventory management with automated ordering for small businesses. 
                             Reduced stockouts by 60% and overstock by 40%.
                         </p>
@@ -190,8 +197,8 @@
                 
                 <div class="project-card">
                     <div class="project-content">
-                        <h3 class="project-title">Multi-tenant SaaS Platform</h3>
-                        <p class="project-description">
+                        <h3 class="project-title" data-translate="project3-title">Multi-tenant SaaS Platform</h3>
+                        <p class="project-description" data-translate="project3-desc">
                             Scalable microservices architecture for SME management platform. 
                             Supports 500+ businesses with automated scaling and multi-tenancy.
                         </p>
@@ -377,26 +384,26 @@
                 <!-- Contact Form -->
                 <form class="contact-form" id="contactForm">
                     <div class="form-group">
-                        <label for="name">Name</label>
+                        <label for="name" data-translate="form-name">Name</label>
                         <input type="text" id="name" name="name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email" data-translate="form-email">Email</label>
                         <input type="email" id="email" name="email" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="subject">Subject</label>
+                        <label for="subject" data-translate="form-subject">Subject</label>
                         <input type="text" id="subject" name="subject" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="message">Message</label>
+                        <label for="message" data-translate="form-message">Message</label>
                         <textarea id="message" name="message" rows="5" required></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <button type="submit" class="btn btn-primary" data-translate="form-button">Send Message</button>
                 </form>
             </div>
         </div>
