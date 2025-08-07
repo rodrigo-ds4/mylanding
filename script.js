@@ -711,6 +711,28 @@ let currentLanguage = 'en';
 let particles = [];
 let rainbowBall;
 
+// 🚨 FUNCIÓN DE PRUEBA SÚPER SIMPLE
+window.testFunction = function() {
+    console.log('🎉 FUNCIÓN DE PRUEBA EJECUTADA!');
+    alert('¡LA FUNCIÓN JAVASCRIPT FUNCIONA!');
+    
+    // Cambiar color del botón para confirmar
+    const btn = document.getElementById('language-button');
+    if (btn) {
+        btn.style.background = btn.style.background === 'red' ? 'green' : 'red';
+        console.log('✅ Color del botón cambiado');
+    }
+    
+    // Cambiar texto
+    const langSpan = document.getElementById('current-language');
+    if (langSpan) {
+        langSpan.textContent = langSpan.textContent === 'EN' ? 'ES' : 'EN';
+        console.log('✅ Texto cambiado');
+    }
+};
+
+console.log('🔥 FUNCIÓN DE PRUEBA CARGADA - testFunction disponible');
+
 // 🚨 DEFINIR FUNCIÓN DE IDIOMAS INMEDIATAMENTE - ANTES DE TODO
 window.currentLang = 'en';
 window.languages = ['en', 'es', 'de'];
