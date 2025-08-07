@@ -51,9 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Actualizar el texto del botón
+        // Actualizar el texto del botón para mostrar el *próximo* idioma
         if (langSpan) {
-            langSpan.textContent = langLabels[currentLang].name;
+            const nextLang = currentLang === 'en' ? 'es' : 'en';
+            langSpan.textContent = langLabels[nextLang].name;
         }
 
         localStorage.setItem('preferred-language', currentLang);
