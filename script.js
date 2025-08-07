@@ -706,23 +706,52 @@ if ('serviceWorker' in navigator) {
 
 // Variables globales
 let currentLanguage = 'en';
+let particles = [];
+let rainbowBall;
 
-// Physics Ball
-class PhysicsBall {
+// Clase para la bolita con física mejorada (la original)
+class RainbowBall {
     constructor() {
         this.x = window.innerWidth / 2;
-        this.y = window.innerHeight / 2;
-        this.vx = (Math.random() - 0.5) * 8; // Velocidad horizontal aleatoria
-        this.vy = (Math.random() - 0.5) * 8; // Velocidad vertical aleatoria
-        this.radius = 6;
-        this.gravity = 0.2;
-        this.friction = 0.98;
-        this.bounce = 0.8;
+        this.y = 50;
+        this.vx = (Math.random() - 0.5) * 6;
+        this.vy = 2;
+        this.radius = 30;
+        this.gravity = 0.3;
+        this.friction = 0.99;
+        this.bounce = 0.7;
         
+        // Crear elemento
         this.element = document.createElement('div');
-        this.element.className = 'physics-ball';
-        document.body.appendChild(this.element);
+        this.element.className = 'rainbow-physics-ball';
+        this.element.style.cssText = `
+            position: fixed;
+            width: ${this.radius * 2}px;
+            height: ${this.radius * 2}px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            box-shadow: 
+                0 0 30px rgba(255, 255, 255, 0.8),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            z-index: 999;
+            pointer-events: none;
+            animation: rainbowGlow 2s linear infinite;
+        `;
         
+        // Añadir animación CSS
+        if (!document.getElementById('rainbow-ball-styles')) {
+            const style = document.createElement('style');
+            style.id = 'rainbow-ball-styles';
+            style.textContent = `
+                @keyframes rainbowGlow {
+                    0% { filter: hue-rotate(0deg) brightness(1.2); }
+                    100% { filter: hue-rotate(360deg) brightness(1.2); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(this.element);
         this.update();
     }
     
@@ -742,151 +771,168 @@ class PhysicsBall {
         if (this.x <= this.radius || this.x >= windowWidth - this.radius) {
             this.vx *= -this.bounce;
             this.x = this.x <= this.radius ? this.radius : windowWidth - this.radius;
-            
-            // Añadir un poco de variación al rebote
-            this.vx += (Math.random() - 0.5) * 2;
+            this.createImpactParticles();
         }
         
         // Rebote vertical
         if (this.y <= this.radius || this.y >= windowHeight - this.radius) {
             this.vy *= -this.bounce;
             this.y = this.y <= this.radius ? this.radius : windowHeight - this.radius;
-            
-            // Añadir un poco de variación al rebote
-            this.vy += (Math.random() - 0.5) * 2;
+            this.createImpactParticles();
         }
         
         // Aplicar fricción
         this.vx *= this.friction;
         this.vy *= this.friction;
         
-        // Limitar velocidades máximas
-        const maxSpeed = 12;
-        if (Math.abs(this.vx) > maxSpeed) this.vx = this.vx > 0 ? maxSpeed : -maxSpeed;
-        if (Math.abs(this.vy) > maxSpeed) this.vy = this.vy > 0 ? maxSpeed : -maxSpeed;
-        
         // Actualizar posición del elemento
-        this.element.style.left = this.x + 'px';
-        this.element.style.top = this.y + 'px';
+        this.element.style.left = (this.x - this.radius) + 'px';
+        this.element.style.top = (this.y - this.radius) + 'px';
         
         // Continuar animación
         requestAnimationFrame(() => this.update());
     }
     
-    // Método para dar impulso a la bolita
-    impulse(force = 5) {
+    createImpactParticles() {
+        for (let i = 0; i < 8; i++) {
+            particles.push(new Particle(this.x, this.y, 'rainbow'));
+        }
+    }
+    
+    impulse(force = 8) {
         this.vx += (Math.random() - 0.5) * force;
         this.vy += (Math.random() - 0.5) * force;
     }
 }
 
-// Inicializar la bolita
-let physicsBall;
-
-// Animaciones y efectos
-function initAnimations() {
-    // Efecto de escritura
-    const typingElements = document.querySelectorAll('.typing-text');
-    typingElements.forEach(element => {
-        const text = element.textContent;
-        element.textContent = '';
-        element.innerHTML = '<span class="cursor"></span>';
+// Clase para partículas
+class Particle {
+    constructor(x, y, type = 'normal') {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 10;
+        this.vy = (Math.random() - 0.5) * 10;
+        this.life = 1;
+        this.decay = 0.02;
+        this.size = Math.random() * 4 + 2;
+        this.type = type;
+        this.hue = Math.random() * 360;
         
-        let i = 0;
-        const typeWriter = () => {
-            if (i < text.length) {
-                element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
-                i++;
-                setTimeout(typeWriter, 100);
-            }
-        };
+        this.element = document.createElement('div');
+        this.element.style.cssText = `
+            position: fixed;
+            width: ${this.size}px;
+            height: ${this.size}px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        `;
         
-        setTimeout(typeWriter, 1000);
-    });
+        this.updateStyle();
+        document.body.appendChild(this.element);
+    }
     
-    // Animación de números (contadores)
-    const animateNumbers = () => {
-        const numbers = document.querySelectorAll('.stat-number');
-        numbers.forEach(number => {
-            const target = parseInt(number.getAttribute('data-target') || number.textContent);
-            let current = 0;
-            const increment = target / 50;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    current = target;
-                    clearInterval(timer);
-                }
-                number.textContent = Math.floor(current) + (number.textContent.includes('+') ? '+' : '');
-            }, 40);
-        });
-    };
-    
-    // Observer para animaciones al hacer scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                
-                // Animar números cuando la sección stats es visible
-                if (entry.target.querySelector('.stat-number')) {
-                    animateNumbers();
-                }
-            }
-        });
-    }, observerOptions);
-    
-    // Observar elementos para animación
-    document.querySelectorAll('.section').forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        observer.observe(section);
-    });
-}
-
-// Efecto hover para el code-block (cuadrado const developer)
-function initCodeBlockHover() {
-    const codeBlock = document.querySelector('.code-block');
-    if (codeBlock) {
-        codeBlock.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px) scale(1.02) rotateX(5deg) rotateY(5deg)';
-            this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-            
-            // Dar impulso a la bolita cuando se hace hover
-            if (physicsBall) {
-                physicsBall.impulse(8);
-            }
-        });
+    updateStyle() {
+        if (this.type === 'rainbow') {
+            this.element.style.background = `hsl(${this.hue}, 100%, 50%)`;
+            this.element.style.boxShadow = `0 0 ${this.size * 2}px hsl(${this.hue}, 100%, 50%)`;
+            this.hue += 5;
+        } else {
+            this.element.style.background = `rgba(255, 255, 255, ${this.life})`;
+        }
         
-        codeBlock.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
-        });
+        this.element.style.opacity = this.life;
+        this.element.style.transform = `scale(${this.life})`;
+    }
+    
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
         
-        // Efecto de movimiento sutil continuo
-        setInterval(() => {
-            if (!codeBlock.matches(':hover')) {
-                const randomX = (Math.random() - 0.5) * 2;
-                const randomY = (Math.random() - 0.5) * 2;
-                codeBlock.style.transform = `translate(${randomX}px, ${randomY}px)`;
-                
-                setTimeout(() => {
-                    if (!codeBlock.matches(':hover')) {
-                        codeBlock.style.transform = 'translate(0, 0)';
-                    }
-                }, 1000);
-            }
-        }, 3000);
+        this.vx *= 0.98;
+        this.vy *= 0.98;
+        this.vy += 0.1; // Gravedad
+        
+        this.element.style.left = this.x + 'px';
+        this.element.style.top = this.y + 'px';
+        
+        this.updateStyle();
+        
+        return this.life > 0;
+    }
+    
+    destroy() {
+        if (this.element.parentNode) {
+            this.element.parentNode.removeChild(this.element);
+        }
     }
 }
 
-// Función para animar las skill bars
+// Sistema de partículas
+function updateParticles() {
+    particles = particles.filter(particle => {
+        const alive = particle.update();
+        if (!alive) {
+            particle.destroy();
+        }
+        return alive;
+    });
+    
+    requestAnimationFrame(updateParticles);
+}
+
+// Efecto arcoiris para elementos
+function addRainbowEffect(element) {
+    element.style.transition = 'all 0.3s ease';
+    element.style.background = 'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)';
+    element.style.backgroundSize = '200% 200%';
+    element.style.animation = 'rainbowShift 1s ease-in-out';
+    element.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+    element.style.transform = 'scale(1.05)';
+    
+    // Crear partículas alrededor del elemento
+    const rect = element.getBoundingClientRect();
+    for (let i = 0; i < 15; i++) {
+        particles.push(new Particle(
+            rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width,
+            rect.top + rect.height / 2 + (Math.random() - 0.5) * rect.height,
+            'rainbow'
+        ));
+    }
+    
+    setTimeout(() => {
+        element.style.background = '';
+        element.style.animation = '';
+        element.style.boxShadow = '';
+        element.style.transform = '';
+    }, 1000);
+}
+
+// Añadir CSS para efectos arcoiris
+function addRainbowStyles() {
+    if (!document.getElementById('rainbow-styles')) {
+        const style = document.createElement('style');
+        style.id = 'rainbow-styles';
+        style.textContent = `
+            @keyframes rainbowShift {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            
+            .skill-progress.rainbow {
+                background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3) !important;
+                background-size: 200% 100% !important;
+                animation: rainbowShift 2s linear infinite !important;
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.6) !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Función para animar las skill bars con efecto arcoiris
 function animateSkillBar(skillItem) {
     const progressBar = skillItem.querySelector('.skill-progress');
     const level = skillItem.getAttribute('data-level');
@@ -894,6 +940,26 @@ function animateSkillBar(skillItem) {
     if (progressBar && level) {
         setTimeout(() => {
             progressBar.style.width = level + '%';
+            
+            // Añadir efecto arcoiris después de un delay
+            setTimeout(() => {
+                progressBar.classList.add('rainbow');
+                
+                // Crear partículas
+                const rect = progressBar.getBoundingClientRect();
+                for (let i = 0; i < 10; i++) {
+                    particles.push(new Particle(
+                        rect.left + Math.random() * rect.width,
+                        rect.top + rect.height / 2,
+                        'rainbow'
+                    ));
+                }
+                
+                // Remover efecto después de 3 segundos
+                setTimeout(() => {
+                    progressBar.classList.remove('rainbow');
+                }, 3000);
+            }, 500);
         }, 200);
     }
 }
@@ -904,17 +970,12 @@ const skillsObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             setTimeout(() => {
                 animateSkillBar(entry.target);
-            }, index * 200); // Efecto cascada
+            }, index * 200);
             skillsObserver.unobserve(entry.target);
         }
     });
 }, {
     threshold: 0.5
-});
-
-// Observar todas las skill items
-document.querySelectorAll('.skill-item').forEach(skill => {
-    skillsObserver.observe(skill);
 });
 
 // Función para actualizar el enlace activo del navbar
@@ -929,7 +990,6 @@ function updateActiveNavLink() {
         let current = '';
         const scrollPosition = window.scrollY + 100;
         
-        // Determinar qué sección está actualmente visible
         sections.forEach(section => {
             const sectionTop = section.offsetTop - 100;
             const sectionHeight = section.offsetHeight;
@@ -939,17 +999,14 @@ function updateActiveNavLink() {
             }
         });
         
-        // Si estamos en la parte superior de la página
         if (window.scrollY < 50) {
             current = 'home';
         }
         
-        // Si estamos en la parte inferior de la página
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 50) {
             current = 'contact';
         }
         
-        // Actualizar enlaces activos
         navLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${current}`) {
@@ -982,7 +1039,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 window.addEventListener('scroll', updateActiveNavLink);
 window.addEventListener('load', updateActiveNavLink);
 
-// Sistema de idiomas
+// Sistema de idiomas actualizado
 const translations = {
     en: {
         // Navigation
@@ -994,27 +1051,27 @@ const translations = {
         
         // Hero Section
         'hero-greeting': "Hello, I'm",
-        'hero-role': 'Data Analyst & ML Engineer',
-        'hero-description': 'Transforming data into actionable insights through machine learning and advanced analytics. Specialized in NLP, predictive modeling, and data-driven decision making.',
+        'hero-role': 'Backend & ML Engineer',
+        'hero-description': 'Specialized in microservices, AI agents, and data science solutions. Creating innovative systems for SMEs with LangChain, ML models, and scalable architectures.',
         'hero-btn-projects': 'View Projects',
         'hero-btn-contact': 'Contact Me',
         'hero-btn-cv': 'Download CV',
         
         // About Section
         'about-title': 'About Me',
-        'about-subtitle': 'Passionate about transforming data into meaningful insights',
+        'about-subtitle': 'Backend specialist focused on creative solutions for small and medium enterprises',
         
         // Projects Section
         'projects-title': 'Featured Projects',
-        'projects-subtitle': 'Some of my recent work in data science and machine learning',
+        'projects-subtitle': 'Creative solutions combining backend, ML, and AI agents for SMEs',
         
         // Skills Section
         'skills-title': 'Technical Skills',
-        'skills-subtitle': 'Technologies and tools I work with',
+        'skills-subtitle': 'Backend, microservices, ML, and AI agent technologies',
         
         // Contact Section
         'contact-title': 'Get In Touch',
-        'contact-subtitle': "Let's work together to bring your data projects to life"
+        'contact-subtitle': "Let's create innovative solutions for your business"
     },
     es: {
         // Navigation
@@ -1026,27 +1083,27 @@ const translations = {
         
         // Hero Section
         'hero-greeting': 'Hola, soy',
-        'hero-role': 'Analista de Datos e Ingeniero ML',
-        'hero-description': 'Transformando datos en insights accionables a través de machine learning y análisis avanzado. Especializado en NLP, modelado predictivo y toma de decisiones basada en datos.',
+        'hero-role': 'Ingeniero Backend & ML',
+        'hero-description': 'Especializado en microservicios, agentes IA y soluciones de data science. Creando sistemas innovadores para PyMEs con LangChain, modelos ML y arquitecturas escalables.',
         'hero-btn-projects': 'Ver Proyectos',
         'hero-btn-contact': 'Contactarme',
         'hero-btn-cv': 'Descargar CV',
         
         // About Section
         'about-title': 'Sobre Mí',
-        'about-subtitle': 'Apasionado por transformar datos en insights significativos',
+        'about-subtitle': 'Especialista en backend enfocado en soluciones creativas para pequeñas y medianas empresas',
         
         // Projects Section
         'projects-title': 'Proyectos Destacados',
-        'projects-subtitle': 'Algunos de mis trabajos recientes en ciencia de datos y machine learning',
+        'projects-subtitle': 'Soluciones creativas combinando backend, ML y agentes IA para PyMEs',
         
         // Skills Section
         'skills-title': 'Habilidades Técnicas',
-        'skills-subtitle': 'Tecnologías y herramientas con las que trabajo',
+        'skills-subtitle': 'Tecnologías de backend, microservicios, ML y agentes IA',
         
         // Contact Section
         'contact-title': 'Contacto',
-        'contact-subtitle': 'Trabajemos juntos para dar vida a tus proyectos de datos'
+        'contact-subtitle': 'Creemos soluciones innovadoras para tu negocio'
     },
     de: {
         // Navigation
@@ -1058,27 +1115,27 @@ const translations = {
         
         // Hero Section
         'hero-greeting': 'Hallo, ich bin',
-        'hero-role': 'Datenanalyst & ML Ingenieur',
-        'hero-description': 'Verwandle Daten in umsetzbare Erkenntnisse durch maschinelles Lernen und erweiterte Analytik. Spezialisiert auf NLP, prädiktive Modellierung und datengesteuerte Entscheidungsfindung.',
+        'hero-role': 'Backend & ML Ingenieur',
+        'hero-description': 'Spezialisiert auf Microservices, KI-Agenten und Data Science-Lösungen. Entwicklung innovativer Systeme für KMU mit LangChain, ML-Modellen und skalierbaren Architekturen.',
         'hero-btn-projects': 'Projekte ansehen',
         'hero-btn-contact': 'Kontakt aufnehmen',
         'hero-btn-cv': 'CV herunterladen',
         
         // About Section
         'about-title': 'Über Mich',
-        'about-subtitle': 'Leidenschaftlich daran interessiert, Daten in bedeutungsvolle Erkenntnisse zu verwandeln',
+        'about-subtitle': 'Backend-Spezialist mit Fokus auf kreative Lösungen für kleine und mittlere Unternehmen',
         
         // Projects Section
         'projects-title': 'Ausgewählte Projekte',
-        'projects-subtitle': 'Einige meiner neuesten Arbeiten in Data Science und Machine Learning',
+        'projects-subtitle': 'Kreative Lösungen, die Backend, ML und KI-Agenten für KMU kombinieren',
         
         // Skills Section
         'skills-title': 'Technische Fähigkeiten',
-        'skills-subtitle': 'Technologien und Tools, mit denen ich arbeite',
+        'skills-subtitle': 'Backend-, Microservices-, ML- und KI-Agent-Technologien',
         
         // Contact Section
         'contact-title': 'Kontakt aufnehmen',
-        'contact-subtitle': 'Lassen Sie uns zusammenarbeiten, um Ihre Datenprojekte zum Leben zu erwecken'
+        'contact-subtitle': 'Lassen Sie uns innovative Lösungen für Ihr Unternehmen schaffen'
     }
 };
 
@@ -1178,7 +1235,6 @@ if (hamburger && navMenu) {
         hamburger.classList.toggle('active');
         navMenu.classList.toggle('active');
         
-        // Prevenir scroll del body cuando el menú está abierto
         if (navMenu.classList.contains('active')) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -1186,7 +1242,6 @@ if (hamburger && navMenu) {
         }
     });
     
-    // Cerrar menú móvil al hacer clic en un enlace
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             hamburger.classList.remove('active');
@@ -1195,7 +1250,6 @@ if (hamburger && navMenu) {
         });
     });
     
-    // Cerrar menú móvil al redimensionar la ventana
     window.addEventListener('resize', () => {
         if (window.innerWidth > 1024) {
             hamburger.classList.remove('active');
@@ -1205,37 +1259,198 @@ if (hamburger && navMenu) {
     });
 }
 
+// Efectos de hover para elementos interactivos
+function initInteractiveEffects() {
+    // Elementos que tendrán efecto arcoiris al mantener presionado
+    const interactiveElements = document.querySelectorAll('.project-card, .skill-item, .contact-item, .code-block, .btn');
+    
+    interactiveElements.forEach(element => {
+        let pressTimer;
+        let isPressed = false;
+        
+        // Para mouse
+        element.addEventListener('mousedown', (e) => {
+            isPressed = true;
+            pressTimer = setTimeout(() => {
+                if (isPressed) {
+                    addRainbowEffect(element);
+                    if (rainbowBall) {
+                        rainbowBall.impulse(12);
+                    }
+                }
+            }, 1000);
+        });
+        
+        element.addEventListener('mouseup', () => {
+            isPressed = false;
+            clearTimeout(pressTimer);
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            isPressed = false;
+            clearTimeout(pressTimer);
+        });
+        
+        // Para touch
+        element.addEventListener('touchstart', (e) => {
+            isPressed = true;
+            pressTimer = setTimeout(() => {
+                if (isPressed) {
+                    addRainbowEffect(element);
+                    if (rainbowBall) {
+                        rainbowBall.impulse(12);
+                    }
+                }
+            }, 1000);
+        });
+        
+        element.addEventListener('touchend', () => {
+            isPressed = false;
+            clearTimeout(pressTimer);
+        });
+    });
+    
+    // Efecto hover para el code-block
+    const codeBlock = document.querySelector('.code-block');
+    if (codeBlock) {
+        codeBlock.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02) rotateX(5deg) rotateY(5deg)';
+            this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            if (rainbowBall) {
+                rainbowBall.impulse(8);
+            }
+        });
+        
+        codeBlock.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1) rotateX(0) rotateY(0)';
+        });
+        
+        // Efecto de movimiento sutil continuo
+        setInterval(() => {
+            if (!codeBlock.matches(':hover')) {
+                const randomX = (Math.random() - 0.5) * 2;
+                const randomY = (Math.random() - 0.5) * 2;
+                codeBlock.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                
+                setTimeout(() => {
+                    if (!codeBlock.matches(':hover')) {
+                        codeBlock.style.transform = 'translate(0, 0)';
+                    }
+                }, 1000);
+            }
+        }, 3000);
+    }
+}
+
+// Animaciones y efectos generales
+function initAnimations() {
+    // Efecto de escritura para el código
+    const typingElements = document.querySelectorAll('.typing-text');
+    typingElements.forEach(element => {
+        const text = element.textContent;
+        element.textContent = '';
+        element.innerHTML = '<span class="cursor"></span>';
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < text.length) {
+                element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        };
+        
+        setTimeout(typeWriter, 1000);
+    });
+    
+    // Animación de números (contadores)
+    const animateNumbers = () => {
+        const numbers = document.querySelectorAll('.stat-number');
+        numbers.forEach(number => {
+            const target = parseInt(number.getAttribute('data-target') || number.textContent);
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                number.textContent = Math.floor(current) + (number.textContent.includes('+') ? '+' : '');
+            }, 40);
+        });
+    };
+    
+    // Observer para animaciones al hacer scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                
+                if (entry.target.querySelector('.stat-number')) {
+                    animateNumbers();
+                }
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(section);
+    });
+}
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
+    // Añadir estilos CSS
+    addRainbowStyles();
+    
+    // Inicializar sistemas
     initAnimations();
     initLanguageSystem();
-    initCodeBlockHover();
+    initInteractiveEffects();
     
-    // Inicializar la bolita física después de que la página esté completamente cargada
+    // Observar skill items
+    document.querySelectorAll('.skill-item').forEach(skill => {
+        skillsObserver.observe(skill);
+    });
+    
+    // Inicializar la bolita física después de que la página esté cargada
     setTimeout(() => {
-        physicsBall = new PhysicsBall();
+        rainbowBall = new RainbowBall();
     }, 1000);
+    
+    // Inicializar sistema de partículas
+    updateParticles();
     
     // Dar impulso a la bolita ocasionalmente
     setInterval(() => {
-        if (physicsBall && Math.random() < 0.1) { // 10% de probabilidad cada 5 segundos
-            physicsBall.impulse(3);
+        if (rainbowBall && Math.random() < 0.1) {
+            rainbowBall.impulse(5);
         }
-    }, 5000);
+    }, 8000);
 });
 
 // Manejar redimensionamiento de ventana
 window.addEventListener('resize', () => {
-    if (physicsBall) {
-        // Ajustar posición de la bolita si está fuera de los nuevos límites
+    if (rainbowBall) {
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         
-        if (physicsBall.x > windowWidth - physicsBall.radius) {
-            physicsBall.x = windowWidth - physicsBall.radius;
+        if (rainbowBall.x > windowWidth - rainbowBall.radius) {
+            rainbowBall.x = windowWidth - rainbowBall.radius;
         }
-        if (physicsBall.y > windowHeight - physicsBall.radius) {
-            physicsBall.y = windowHeight - physicsBall.radius;
+        if (rainbowBall.y > windowHeight - rainbowBall.radius) {
+            rainbowBall.y = windowHeight - rainbowBall.radius;
         }
     }
 }); 
