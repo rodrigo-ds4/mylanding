@@ -188,6 +188,11 @@ body::before {
     margin-right: 1rem;
 }
 
+/* --- Selector de Idiomas Simplificado --- */
+.language-selector {
+    position: relative;
+}
+
 .lang-btn {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--secondary-color);

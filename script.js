@@ -1,10 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 DOM Completamente Cargado. Iniciando script...');
 
-    // --- SISTEMA DE IDIOMAS ---
+    // --- SISTEMA DE IDIOMAS (SIMPLIFICADO A TOGGLE) ---
+    // ===================================================================
+
     let currentLang = 'en';
-    const languages = ['en', 'es', 'de'];
-    const langLabels = { 'en': 'EN', 'es': 'ES', 'de': 'DE' };
+    const languages = ['en', 'es']; // Solo inglés y español
+    const langLabels = {
+        'en': { flag: '🇺🇸', name: 'English' },
+        'es': { flag: '🇪🇸', name: 'Español' }
+    };
+
     const translations = {
         en: {
             'nav-home': 'Home', 'nav-about': 'About', 'nav-projects': 'Projects', 'nav-skills': 'Skills', 'nav-contact': 'Contact',
@@ -25,56 +31,45 @@ document.addEventListener('DOMContentLoaded', () => {
             'projects-title': 'Proyectos Destacados', 'projects-subtitle': 'Soluciones creativas combinando backend, ML y agentes IA para PyMEs',
             'skills-title': 'Habilidades Técnicas', 'skills-subtitle': 'Tecnologías de backend, microservicios, ML y agentes IA',
             'contact-title': 'Contacto', 'contact-subtitle': 'Creemos soluciones innovadoras para tu negocio'
-        },
-        de: {
-            'nav-home': 'Startseite', 'nav-about': 'Über mich', 'nav-projects': 'Projekte', 'nav-skills': 'Fähigkeiten', 'nav-contact': 'Kontakt',
-            'hero-greeting': 'Hallo, ich bin', 'hero-role': 'Backend & ML Ingenieur',
-            'hero-description': 'Spezialisiert auf Microservices, KI-Agenten und Data Science-Lösungen. Entwicklung innovativer Systeme für KMU mit LangChain, ML-Modellen und skalierbaren Architekturen.',
-            'hero-btn-projects': 'Projekte ansehen', 'hero-btn-contact': 'Kontakt aufnehmen', 'hero-btn-cv': 'CV herunterladen',
-            'about-title': 'Über Mich', 'about-subtitle': 'Backend-Spezialist mit Fokus auf kreative Lösungen für kleine und mittlere Unternehmen',
-            'projects-title': 'Ausgewählte Projekte', 'projects-subtitle': 'Kreative Lösungen, die Backend, ML und KI-Agenten für KMU kombinieren',
-            'skills-title': 'Technische Fähigkeiten', 'skills-subtitle': 'Backend-, Microservices-, ML- und KI-Agent-Technologien',
-            'contact-title': 'Kontakt aufnehmen', 'contact-subtitle': 'Lassen Sie uns innovative Lösungen für Ihr Unternehmen schaffen'
         }
+        // Objeto de alemán completamente eliminado
     };
 
     const languageButton = document.getElementById('language-button');
     const langSpan = document.getElementById('current-language');
 
-    function applyTranslations(lang) {
+    function setLanguage(lang) {
+        if (!languages.includes(lang)) lang = 'en'; // Fallback
+        
+        currentLang = lang;
+        
+        // Aplicar traducciones
         document.querySelectorAll('[data-translate]').forEach(el => {
             const key = el.getAttribute('data-translate');
-            if (translations[lang] && translations[lang][key]) {
-                el.textContent = translations[lang][key];
+            if (translations[currentLang] && translations[currentLang][key]) {
+                el.textContent = translations[currentLang][key];
             }
         });
-        if (langSpan) {
-            langSpan.textContent = langLabels[lang];
-        }
-    }
 
-    function switchLanguage() {
-        console.log('🔄 Cambiando idioma...');
-        const currentIndex = languages.indexOf(currentLang);
-        const nextIndex = (currentIndex + 1) % languages.length;
-        currentLang = languages[nextIndex];
-        
-        applyTranslations(currentLang);
+        // Actualizar el texto del botón
+        if (langSpan) {
+            langSpan.textContent = langLabels[currentLang].name;
+        }
+
         localStorage.setItem('preferred-language', currentLang);
         console.log(`✅ Idioma cambiado a: ${currentLang}`);
     }
 
     if (languageButton) {
-        languageButton.addEventListener('click', switchLanguage);
-        console.log('✅ Listener de click añadido al botón de idioma.');
+        languageButton.addEventListener('click', () => {
+            const newLang = currentLang === 'en' ? 'es' : 'en';
+            setLanguage(newLang);
+        });
 
         // Cargar idioma guardado
-        const savedLang = localStorage.getItem('preferred-language');
-        if (savedLang && languages.includes(savedLang)) {
-            currentLang = savedLang;
-        }
-        applyTranslations(currentLang);
-        console.log(`🗣️ Idioma inicial: ${currentLang}`);
+        const savedLang = localStorage.getItem('preferred-language') || 'en';
+        setLanguage(savedLang);
+        console.log(`🗣️ Idioma inicial: ${savedLang}`);
     } else {
         console.error('❌ No se encontró el botón de idioma.');
     }
