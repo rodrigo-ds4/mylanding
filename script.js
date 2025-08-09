@@ -111,12 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!stack) return;
         const separators = Array.from(document.querySelectorAll('hr.section-separator'));
         const grays = [230, 225, 220, 215, 210, 205, 200, 195];
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const idx = separators.indexOf(entry.target);
-                if (idx === -1) return;
-                if (entry.isIntersecting && entry.boundingClientRect.top <= (80)) {
-                    // Add if not present
+        function onScroll() {
+            const headerHeight = 64;
+            separators.forEach((hr, idx) => {
+                const rect = hr.getBoundingClientRect();
+                if (rect.top <= headerHeight) {
                     if (!stack.querySelector(`[data-hr-idx="${idx}"]`)) {
                         const div = document.createElement('div');
                         div.className = 'hr-item';
@@ -127,8 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
-        }, { root: null, threshold: [0], rootMargin: '-80px 0px 0px 0px' });
-        separators.forEach(hr => observer.observe(hr));
+        }
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
     })();
 
     // --- Fondo de partículas en escala de grises ---
@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bouncing balls with collisions
         const balls = [];
-        const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 22000));
-        const minR = 3, maxR = 10;
+        const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 26000));
+        const minR = 4, maxR = 14;
 
         function spawn() {
             balls.length = 0;

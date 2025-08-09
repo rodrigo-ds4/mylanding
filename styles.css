@@ -79,6 +79,7 @@ body::before {
     position: relative;
     z-index: 1;
     margin: 0;
+    border: 0;
 }
 
 /* HR stack fixed under header */
