@@ -105,6 +105,32 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('❌ No se encontró el botón de idioma.');
     }
 
+    // --- Apilar HR en scroll ---
+    (function initHrStack() {
+        const stack = document.getElementById('hr-stack');
+        if (!stack) return;
+        const separators = Array.from(document.querySelectorAll('hr.section-separator'));
+        const grays = [220, 210, 200, 190, 180, 170];
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const idx = separators.indexOf(entry.target);
+                if (idx === -1) return;
+                if (entry.isIntersecting && entry.boundingClientRect.top <= (80)) {
+                    // Add if not present
+                    if (!stack.querySelector(`[data-hr-idx="${idx}"]`)) {
+                        const div = document.createElement('div');
+                        div.className = 'hr-item';
+                        div.dataset.hrIdx = String(idx);
+                        const tone = grays[Math.min(idx, grays.length - 1)];
+                        div.style.background = `rgb(${tone},${tone},${tone})`;
+                        stack.appendChild(div);
+                    }
+                }
+            });
+        }, { root: null, threshold: [0], rootMargin: '-80px 0px 0px 0px' });
+        separators.forEach(hr => observer.observe(hr));
+    })();
+
     // --- Fondo de partículas en escala de grises ---
     (function initBackgroundParticles() {
         const canvas = document.getElementById('bg-canvas');
@@ -121,52 +147,78 @@ document.addEventListener('DOMContentLoaded', () => {
         resize();
         window.addEventListener('resize', resize);
 
-        const particles = [];
-        const config = { count: Math.min(200, Math.floor((window.innerWidth * canvas.height) / 14000)) };
-        const TWO_PI = Math.PI * 2;
-        let t = 0;
+        // Bouncing balls with collisions
+        const balls = [];
+        const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 22000));
+        const minR = 3, maxR = 10;
 
-        function resetParticles() {
-            particles.length = 0;
-            for (let i = 0; i < config.count; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    r: 1 + Math.random() * 2,
-                    p: Math.random() * TWO_PI,
-                    s: 0.5 + Math.random() * 1.0,
-                    o: 0.2 + Math.random() * 0.6
+        function spawn() {
+            balls.length = 0;
+            for (let i = 0; i < count; i++) {
+                const r = minR + Math.random() * (maxR - minR);
+                balls.push({
+                    x: r + Math.random() * (canvas.width - 2 * r),
+                    y: r + Math.random() * (canvas.height - 2 * r),
+                    vx: (Math.random() - 0.5) * 0.6,
+                    vy: (Math.random() - 0.5) * 0.6,
+                    r,
+                    gray: 200 + Math.floor(Math.random() * 40)
                 });
             }
         }
-        resetParticles();
+        spawn();
 
-        function draw() {
-            t += 0.003;
+        function step() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Particles (no molecular links)
-            for (const p of particles) {
-                const waveX = Math.sin(t * 1.5 + p.p) * 0.6;
-                const waveY = Math.cos(t * 1.1 + p.p) * 0.6;
-                p.x += waveX * p.s;
-                p.y += waveY * p.s;
+            // integrate
+            for (const b of balls) {
+                b.x += b.vx;
+                b.y += b.vy;
+                // wall collisions
+                if (b.x - b.r < 0) { b.x = b.r; b.vx *= -1; }
+                if (b.x + b.r > canvas.width) { b.x = canvas.width - b.r; b.vx *= -1; }
+                if (b.y - b.r < 0) { b.y = b.r; b.vy *= -1; }
+                if (b.y + b.r > canvas.height) { b.y = canvas.height - b.r; b.vy *= -1; }
+            }
 
-                // wrap horizontally; clamp vertically inside canvas
-                if (p.x < -10) p.x = canvas.width + 10; else if (p.x > canvas.width + 10) p.x = -10;
-                if (p.y < -10) p.y = canvas.height + 10; else if (p.y > canvas.height + 10) p.y = -10;
+            // simple pairwise collision (elastic, equal mass)
+            for (let i = 0; i < balls.length; i++) {
+                for (let j = i + 1; j < balls.length; j++) {
+                    const a = balls[i], c = balls[j];
+                    const dx = c.x - a.x, dy = c.y - a.y;
+                    const dist = Math.hypot(dx, dy);
+                    const minDist = a.r + c.r;
+                    if (dist > 0 && dist < minDist) {
+                        // resolve overlap
+                        const overlap = 0.5 * (minDist - dist);
+                        const nx = dx / dist, ny = dy / dist;
+                        a.x -= overlap * nx; a.y -= overlap * ny;
+                        c.x += overlap * nx; c.y += overlap * ny;
+                        // swap velocity components along normal (equal mass)
+                        const avn = a.vx * nx + a.vy * ny;
+                        const cvn = c.vx * nx + c.vy * ny;
+                        const tvn = cvn; // target for a
+                        const svn = avn; // target for c
+                        a.vx += (tvn - avn) * nx; a.vy += (tvn - avn) * ny;
+                        c.vx += (svn - cvn) * nx; c.vy += (svn - cvn) * ny;
+                    }
+                }
+            }
 
-                const gray = Math.round(80 + Math.sin(t + p.p * 2) * 60);
-                ctx.fillStyle = `rgba(${gray},${gray},${gray},${p.o})`;
+            // draw
+            for (const b of balls) {
+                const g = b.gray; // lighter gray
+                ctx.fillStyle = `rgba(${g},${g},${g},0.9)`;
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, TWO_PI);
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
                 ctx.fill();
             }
-            requestAnimationFrame(draw);
+            requestAnimationFrame(step);
         }
-        draw();
+        step();
     })();
 
     // --- Contact form submission ---
