@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
     <!-- Header -->
     <header class="header">
         <nav class="nav-container">
@@ -47,10 +46,11 @@
     </header>
 
     <!-- Stacked separators under header -->
-    <div id="hr-stack" class="hr-stack" aria-hidden="true"></div>
+    <div id="hr-stack" class="hr-stack" aria-hidden="true"><div class="hr-base"></div></div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <canvas id="bg-canvas"></canvas>
         <div class="hero-container">
             <div class="hero-content">
                 <h1 class="hero-title">

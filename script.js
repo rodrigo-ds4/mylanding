@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stack = document.getElementById('hr-stack');
         if (!stack) return;
         const separators = Array.from(document.querySelectorAll('hr.section-separator'));
-        const grays = [220, 210, 200, 190, 180, 170];
+        const grays = [230, 225, 220, 215, 210, 205, 200, 195];
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const idx = separators.indexOf(entry.target);
@@ -162,16 +162,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     vx: (Math.random() - 0.5) * 0.6,
                     vy: (Math.random() - 0.5) * 0.6,
                     r,
-                    gray: 200 + Math.floor(Math.random() * 40)
+                    gray: 235 + Math.floor(Math.random() * 10)
                 });
             }
         }
         spawn();
 
+        let running = true;
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                running = e.isIntersecting;
+            });
+        }, { threshold: 0 });
+        if (hero) io.observe(hero);
+
         function step() {
+            if (!running) { requestAnimationFrame(step); return; }
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // integrate
             for (const b of balls) {
@@ -211,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // draw
             for (const b of balls) {
                 const g = b.gray; // lighter gray
-                ctx.fillStyle = `rgba(${g},${g},${g},0.9)`;
+                ctx.fillStyle = `rgba(${g},${g},${g},0.95)`;
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
                 ctx.fill();
