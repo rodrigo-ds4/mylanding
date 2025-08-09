@@ -28,6 +28,8 @@ body {
     z-index: -1;
     pointer-events: none;
 }
+/* ensure canvas visually aligns to hero only */
+.hero { position: relative; }
 
 :root {
     --primary-color: #000000;
@@ -903,15 +905,9 @@ body::before {
 @media (max-width: 768px) {
     .hero-container {
         grid-template-columns: 1fr;
-        text-align: center;
-        gap: 2rem;
     }
-
-    .hero-visual {
-        order: -1;
-        height: 300px;
-    }
-
+    .hero-content.mobile-first { order: -1; }
+    .hero-visual.mobile-second { order: 0; }
     .hero-buttons {
         justify-content: center;
     }

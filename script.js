@@ -55,6 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageButton = document.getElementById('language-button');
     const langSpan = document.getElementById('current-language');
 
+    // Ensure hero text first on mobile: add class to control order
+    (function ensureHeroOrderMobile() {
+        const hero = document.querySelector('.hero-container');
+        const content = document.querySelector('.hero-content');
+        const visual = document.querySelector('.hero-visual');
+        if (hero && content && visual) {
+            if (window.matchMedia('(max-width: 768px)').matches) {
+                content.classList.add('mobile-first');
+                visual.classList.add('mobile-second');
+            }
+        }
+    })();
+
     function setLanguage(lang) {
         if (!languages.includes(lang)) lang = 'en'; // Fallback
         
@@ -98,15 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
 
+        // Limit canvas to hero section height (before first hr)
+        const hero = document.querySelector('#home');
         function resize() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const limit = hero ? hero.getBoundingClientRect().height : window.innerHeight;
+            canvas.height = Math.max(200, Math.floor(limit));
         }
         resize();
         window.addEventListener('resize', resize);
 
         const particles = [];
-        const config = { count: Math.min(220, Math.floor((window.innerWidth * window.innerHeight) / 12000)), dist: 110 };
+        const config = { count: Math.min(200, Math.floor((window.innerWidth * canvas.height) / 14000)) };
         const TWO_PI = Math.PI * 2;
         let t = 0;
 
@@ -119,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     r: 1 + Math.random() * 2,
                     p: Math.random() * TWO_PI,
                     s: 0.5 + Math.random() * 1.0,
-                    g: 100 + Math.random() * 100,
                     o: 0.2 + Math.random() * 0.6
                 });
             }
@@ -128,40 +143,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function draw() {
             t += 0.003;
-            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Connections
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const a = particles[i];
-                    const b = particles[j];
-                    const dx = a.x - b.x, dy = a.y - b.y;
-                    const d = Math.hypot(dx, dy);
-                    if (d < config.dist) {
-                        const alpha = (1 - d / config.dist) * 0.08;
-                        ctx.strokeStyle = `rgba(0,0,0,${alpha})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(a.x, a.y);
-                        ctx.lineTo(b.x, b.y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            // Particles
+            // Particles (no molecular links)
             for (const p of particles) {
                 const waveX = Math.sin(t * 1.5 + p.p) * 0.6;
                 const waveY = Math.cos(t * 1.1 + p.p) * 0.6;
                 p.x += waveX * p.s;
                 p.y += waveY * p.s;
 
-                // wrap
+                // wrap horizontally; clamp vertically inside canvas
                 if (p.x < -10) p.x = canvas.width + 10; else if (p.x > canvas.width + 10) p.x = -10;
                 if (p.y < -10) p.y = canvas.height + 10; else if (p.y > canvas.height + 10) p.y = -10;
 
-                const gray = Math.round(60 + Math.sin(t + p.p * 2) * 40);
+                const gray = Math.round(80 + Math.sin(t + p.p * 2) * 60);
                 ctx.fillStyle = `rgba(${gray},${gray},${gray},${p.o})`;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, TWO_PI);
@@ -170,6 +167,43 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(draw);
         }
         draw();
+    })();
+
+    // --- Contact form submission ---
+    (function initContactForm() {
+        const form = document.getElementById('contactForm');
+        if (!form) return;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const data = Object.fromEntries(new FormData(form).entries());
+            try {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = currentLang === 'es' ? 'Enviando…' : 'Sending…';
+                }
+                const resp = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const json = await resp.json();
+                if (json.ok) {
+                    form.reset();
+                    alert(currentLang === 'es' ? 'Mensaje enviado ✅' : 'Message sent ✅');
+                } else {
+                    throw new Error(json.error || 'Send failed');
+                }
+            } catch (err) {
+                console.error(err);
+                alert(currentLang === 'es' ? 'No se pudo enviar. Intenta más tarde.' : 'Could not send. Please try later.');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = currentLang === 'es' ? 'Enviar Mensaje' : 'Send Message';
+                }
+            }
+        });
     })();
 
     // --- Tilt 3D leve en tarjetas de proyecto ---
