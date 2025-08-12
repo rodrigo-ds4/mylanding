@@ -246,15 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.35 });
         items.forEach(it => io.observe(it));
 
-        // Hover accent
+        // Hover accent (no removal, stays rainbow)
         items.forEach(it => {
             it.addEventListener('mouseenter', () => {
                 const prog = it.querySelector('.skill-progress');
                 prog && prog.classList.add('rainbow');
-            });
-            it.addEventListener('mouseleave', () => {
-                const prog = it.querySelector('.skill-progress');
-                prog && prog.classList.remove('rainbow');
             });
         });
     })();
