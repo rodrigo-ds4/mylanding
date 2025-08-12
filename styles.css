@@ -729,12 +729,22 @@ body::before {
 
 .skill-progress {
     height: 100%;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-    border-radius: 3px;
-    width: 0%;
-    transition: width 1.5s ease;
-    position: relative;
-    overflow: hidden;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent-color), var(--accent-color));
+    border-radius: 999px;
+    transition: width 1.2s ease;
+}
+
+.skill-progress.rainbow {
+    background: linear-gradient(90deg,
+      #ff3b30, #ff9500, #ffd60a, #34c759, #0a84ff, #5e5ce6, #ff2d55);
+    background-size: 300% 100%;
+    animation: rainbow-shift 3.5s linear infinite;
+}
+
+@keyframes rainbow-shift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 .skill-progress::after {

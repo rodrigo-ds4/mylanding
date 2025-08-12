@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bouncing balls with collisions
         const balls = [];
         const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 26000));
-        const minR = 4, maxR = 14;
+        const minR = 6, maxR = 20;
 
         function spawn() {
             balls.length = 0;
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     vx: (Math.random() - 0.5) * 0.6,
                     vy: (Math.random() - 0.5) * 0.6,
                     r,
-                    gray: 235 + Math.floor(Math.random() * 10)
+                    gray: 242 + Math.floor(Math.random() * 10)
                 });
             }
         }
@@ -226,6 +226,37 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(step);
         }
         step();
+    })();
+
+    // --- Skill bars: fill on scroll with rainbow accent ---
+    (function initSkills() {
+        const items = document.querySelectorAll('.skill-item');
+        if (!items.length) return;
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(({ target, isIntersecting }) => {
+                if (!isIntersecting) return;
+                const level = Number(target.getAttribute('data-level')) || 0;
+                const prog = target.querySelector('.skill-progress');
+                if (prog) {
+                    prog.style.width = level + '%';
+                    prog.classList.add('rainbow');
+                }
+                io.unobserve(target);
+            });
+        }, { threshold: 0.35 });
+        items.forEach(it => io.observe(it));
+
+        // Hover accent
+        items.forEach(it => {
+            it.addEventListener('mouseenter', () => {
+                const prog = it.querySelector('.skill-progress');
+                prog && prog.classList.add('rainbow');
+            });
+            it.addEventListener('mouseleave', () => {
+                const prog = it.querySelector('.skill-progress');
+                prog && prog.classList.remove('rainbow');
+            });
+        });
     })();
 
     // --- Contact form submission ---
