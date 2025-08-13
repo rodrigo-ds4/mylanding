@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bouncing balls with collisions
         const balls = [];
-        const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 26000));
+        let count = Math.max(12, Math.min(28, Math.floor((canvas.width * canvas.height) / 120000)));
         const minR = 18, maxR = 60;
 
         function spawn() {
@@ -226,6 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(step);
         }
         step();
+
+        // Recompute density on resize and respawn
+        window.addEventListener('resize', () => {
+            count = Math.max(12, Math.min(28, Math.floor((canvas.width * canvas.height) / 120000)));
+            spawn();
+        });
     })();
 
     // --- Skill bars: fill on scroll with rainbow accent ---
