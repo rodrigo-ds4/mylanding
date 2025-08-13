@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Bouncing balls with collisions
         const balls = [];
-        let count = Math.max(12, Math.min(28, Math.floor((canvas.width * canvas.height) / 120000)));
-        const minR = 18, maxR = 60;
+        let count = Math.max(6, Math.min(14, Math.floor((canvas.width * canvas.height) / 300000)));
+        const minR = 36, maxR = 120;
 
         function spawn() {
             balls.length = 0;
@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 balls.push({
                     x: r + Math.random() * (canvas.width - 2 * r),
                     y: r + Math.random() * (canvas.height - 2 * r),
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
+                    vx: (Math.random() - 0.5) * 0.35,
+                    vy: (Math.random() - 0.5) * 0.35,
                     r,
                     gray: 242 + Math.floor(Math.random() * 10)
                 });
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Recompute density on resize and respawn
         window.addEventListener('resize', () => {
-            count = Math.max(12, Math.min(28, Math.floor((canvas.width * canvas.height) / 120000)));
+            count = Math.max(6, Math.min(14, Math.floor((canvas.width * canvas.height) / 300000)));
             spawn();
         });
     })();
