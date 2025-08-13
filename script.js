@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Bouncing balls with collisions
         const balls = [];
         const count = Math.min(60, Math.floor((canvas.width * canvas.height) / 26000));
-        const minR = 6, maxR = 20;
+        const minR = 18, maxR = 60;
 
         function spawn() {
             balls.length = 0;
@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 balls.push({
                     x: r + Math.random() * (canvas.width - 2 * r),
                     y: r + Math.random() * (canvas.height - 2 * r),
-                    vx: (Math.random() - 0.5) * 0.6,
-                    vy: (Math.random() - 0.5) * 0.6,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
                     r,
                     gray: 242 + Math.floor(Math.random() * 10)
                 });

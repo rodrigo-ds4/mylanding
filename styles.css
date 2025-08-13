@@ -620,7 +620,7 @@ body::before {
 }
 
 .project-card:hover::before {
-    height: 4px;
+    height: 6px;
     animation: rainbow-shift 3.5s linear infinite;
 }
 
