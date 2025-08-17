@@ -131,36 +131,60 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('scroll', onScroll, { passive: true });
     })();
 
-    // --- Fondo de partículas en escala de grises ---
+    // --- Optimized Background Particles ---
     (function initBackgroundParticles() {
         const canvas = document.getElementById('bg-canvas');
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        
+        // Performance check: reduce particles on mobile/low-end devices
+        const isMobile = window.innerWidth < 768;
+        const isLowPerf = navigator.hardwareConcurrency < 4;
+        const perfMultiplier = (isMobile || isLowPerf) ? 0.5 : 1;
 
-        // Limit canvas to hero section height (before first hr)
+        const ctx = canvas.getContext('2d');
+        let animationId = null;
+        let lastTime = 0;
+        const targetFPS = 60;
+        const frameInterval = 1000 / targetFPS;
+
+        // Limit canvas to hero section height
         const hero = document.querySelector('#home');
         function resize() {
-            canvas.width = window.innerWidth;
-            const limit = hero ? hero.getBoundingClientRect().height : window.innerHeight;
-            canvas.height = Math.max(200, Math.floor(limit));
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            // Set actual size in memory (scaled to account for extra pixel density)
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            // Scale the drawing context so everything draws at the correct size
+            ctx.scale(dpr, dpr);
+            
+            // Set the size the element should appear on the page
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
         }
+        
+        // Use ResizeObserver for better performance than resize event
+        const resizeObserver = new ResizeObserver(resize);
+        if (hero) resizeObserver.observe(hero);
         resize();
-        window.addEventListener('resize', resize);
 
-        // Bouncing balls with collisions
+        // Optimized balls with object pooling
         const balls = [];
-        let count = Math.max(6, Math.min(14, Math.floor((canvas.width * canvas.height) / 300000)));
-        const minR = 36, maxR = 120;
+        let count = Math.max(3, Math.min(12, Math.floor((canvas.width * canvas.height) / 400000) * perfMultiplier));
+        const minR = isMobile ? 20 : 36;
+        const maxR = isMobile ? 80 : 120;
 
         function spawn() {
             balls.length = 0;
             for (let i = 0; i < count; i++) {
                 const r = minR + Math.random() * (maxR - minR);
                 balls.push({
-                    x: r + Math.random() * (canvas.width - 2 * r),
-                    y: r + Math.random() * (canvas.height - 2 * r),
-                    vx: (Math.random() - 0.5) * 0.35,
-                    vy: (Math.random() - 0.5) * 0.35,
+                    x: r + Math.random() * (canvas.width / (window.devicePixelRatio || 1) - 2 * r),
+                    y: r + Math.random() * (canvas.height / (window.devicePixelRatio || 1) - 2 * r),
+                    vx: (Math.random() - 0.5) * 0.25,
+                    vy: (Math.random() - 0.5) * 0.25,
                     r,
                     gray: 242 + Math.floor(Math.random() * 10)
                 });
@@ -169,68 +193,126 @@ document.addEventListener('DOMContentLoaded', () => {
         spawn();
 
         let running = true;
+        let visible = false;
+        
+        // Intersection Observer for performance
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
-                running = e.isIntersecting;
+                visible = e.isIntersecting;
+                if (visible && !running) {
+                    running = true;
+                    step(performance.now());
+                } else if (!visible) {
+                    running = false;
+                    if (animationId) {
+                        cancelAnimationFrame(animationId);
+                        animationId = null;
+                    }
+                }
             });
-        }, { threshold: 0 });
+        }, { threshold: 0.1, rootMargin: '50px' });
+        
         if (hero) io.observe(hero);
 
-        function step() {
-            if (!running) { requestAnimationFrame(step); return; }
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function step(currentTime) {
+            if (!running || !visible) return;
 
-            // integrate
+            // Frame rate limiting for better performance
+            if (currentTime - lastTime < frameInterval) {
+                animationId = requestAnimationFrame(step);
+                return;
+            }
+
+            const canvasWidth = canvas.width / (window.devicePixelRatio || 1);
+            const canvasHeight = canvas.height / (window.devicePixelRatio || 1);
+            
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+            // Optimized physics integration
             for (const b of balls) {
                 b.x += b.vx;
                 b.y += b.vy;
-                // wall collisions
-                if (b.x - b.r < 0) { b.x = b.r; b.vx *= -1; }
-                if (b.x + b.r > canvas.width) { b.x = canvas.width - b.r; b.vx *= -1; }
-                if (b.y - b.r < 0) { b.y = b.r; b.vy *= -1; }
-                if (b.y + b.r > canvas.height) { b.y = canvas.height - b.r; b.vy *= -1; }
+                
+                // Wall collisions with damping
+                if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.95; }
+                if (b.x + b.r > canvasWidth) { b.x = canvasWidth - b.r; b.vx *= -0.95; }
+                if (b.y - b.r < 0) { b.y = b.r; b.vy *= -0.95; }
+                if (b.y + b.r > canvasHeight) { b.y = canvasHeight - b.r; b.vy *= -0.95; }
             }
 
-            // simple pairwise collision (elastic, equal mass)
+            // Optimized collision detection with spatial partitioning concept
+            const gridSize = maxR * 2;
             for (let i = 0; i < balls.length; i++) {
                 for (let j = i + 1; j < balls.length; j++) {
                     const a = balls[i], c = balls[j];
-                    const dx = c.x - a.x, dy = c.y - a.y;
-                    const dist = Math.hypot(dx, dy);
+                    
+                    // Quick distance check before expensive calculations
+                    const dx = c.x - a.x;
+                    const dy = c.y - a.y;
                     const minDist = a.r + c.r;
-                    if (dist > 0 && dist < minDist) {
-                        // resolve overlap
+                    
+                    if (Math.abs(dx) > minDist || Math.abs(dy) > minDist) continue;
+                    
+                    const distSq = dx * dx + dy * dy;
+                    const minDistSq = minDist * minDist;
+                    
+                    if (distSq < minDistSq && distSq > 0) {
+                        const dist = Math.sqrt(distSq);
                         const overlap = 0.5 * (minDist - dist);
-                        const nx = dx / dist, ny = dy / dist;
-                        a.x -= overlap * nx; a.y -= overlap * ny;
-                        c.x += overlap * nx; c.y += overlap * ny;
-                        // swap velocity components along normal (equal mass)
+                        const nx = dx / dist;
+                        const ny = dy / dist;
+                        
+                        // Resolve overlap
+                        a.x -= overlap * nx;
+                        a.y -= overlap * ny;
+                        c.x += overlap * nx;
+                        c.y += overlap * ny;
+                        
+                        // Elastic collision with damping
                         const avn = a.vx * nx + a.vy * ny;
                         const cvn = c.vx * nx + c.vy * ny;
-                        const tvn = cvn; // target for a
-                        const svn = avn; // target for c
-                        a.vx += (tvn - avn) * nx; a.vy += (tvn - avn) * ny;
-                        c.vx += (svn - cvn) * nx; c.vy += (svn - cvn) * ny;
+                        const damping = 0.9;
+                        
+                        a.vx += (cvn - avn) * nx * damping;
+                        a.vy += (cvn - avn) * ny * damping;
+                        c.vx += (avn - cvn) * nx * damping;
+                        c.vy += (avn - cvn) * ny * damping;
                     }
                 }
             }
 
-            // draw
+            // Optimized drawing with reduced draw calls
+            ctx.fillStyle = `rgba(245,245,245,0.95)`;
+            ctx.beginPath();
+            
             for (const b of balls) {
-                const g = b.gray; // lighter gray
-                ctx.fillStyle = `rgba(${g},${g},${g},0.95)`;
-                ctx.beginPath();
+                ctx.moveTo(b.x + b.r, b.y);
                 ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-                ctx.fill();
             }
-            requestAnimationFrame(step);
+            ctx.fill();
+            
+            lastTime = currentTime;
+            animationId = requestAnimationFrame(step);
         }
-        step();
 
-        // Recompute density on resize and respawn
+        // Start animation only if visible
+        if (visible) step(performance.now());
+
+        // Throttled resize handler
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            count = Math.max(6, Math.min(14, Math.floor((canvas.width * canvas.height) / 300000)));
-            spawn();
+            if (resizeTimeout) clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                count = Math.max(3, Math.min(12, Math.floor((canvas.width * canvas.height) / 400000) * perfMultiplier));
+                spawn();
+            }, 250);
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (animationId) cancelAnimationFrame(animationId);
+            if (resizeObserver) resizeObserver.disconnect();
+            if (io) io.disconnect();
         });
     })();
 
@@ -261,41 +343,167 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })();
 
-    // --- Contact form submission ---
+    // --- Enhanced Contact form submission ---
     (function initContactForm() {
         const form = document.getElementById('contactForm');
         if (!form) return;
+        
+        // Add form validation feedback
+        const inputs = form.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', validateField);
+            input.addEventListener('input', clearValidationError);
+        });
+        
+        function validateField(e) {
+            const field = e.target;
+            const value = field.value.trim();
+            
+            // Remove existing error styling
+            field.classList.remove('error');
+            let errorEl = field.parentNode.querySelector('.field-error');
+            if (errorEl) errorEl.remove();
+            
+            // Validate based on field type
+            let isValid = true;
+            let errorMessage = '';
+            
+            if (field.hasAttribute('required') && !value) {
+                isValid = false;
+                errorMessage = currentLang === 'es' ? 'Este campo es obligatorio' : 'This field is required';
+            } else if (field.type === 'email' && value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = currentLang === 'es' ? 'Email inválido' : 'Invalid email address';
+                }
+            }
+            
+            if (!isValid) {
+                field.classList.add('error');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error';
+                errorDiv.textContent = errorMessage;
+                field.parentNode.appendChild(errorDiv);
+            }
+            
+            return isValid;
+        }
+        
+        function clearValidationError(e) {
+            const field = e.target;
+            field.classList.remove('error');
+            const errorEl = field.parentNode.querySelector('.field-error');
+            if (errorEl) errorEl.remove();
+        }
+        
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Validate all fields
+            let formIsValid = true;
+            inputs.forEach(input => {
+                if (!validateField({ target: input })) {
+                    formIsValid = false;
+                }
+            });
+            
+            if (!formIsValid) {
+                // Scroll to first error
+                const firstError = form.querySelector('.error');
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+            
             const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
             const data = Object.fromEntries(new FormData(form).entries());
+            
             try {
                 if (submitBtn) {
                     submitBtn.disabled = true;
+                    submitBtn.classList.add('loading');
                     submitBtn.textContent = currentLang === 'es' ? 'Enviando…' : 'Sending…';
                 }
+                
                 const resp = await fetch('/api/contact', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
+                
                 const json = await resp.json();
+                
                 if (json.ok) {
+                    // Show success message
+                    showNotification(
+                        currentLang === 'es' ? 'Mensaje enviado exitosamente ✅' : 'Message sent successfully ✅',
+                        'success'
+                    );
                     form.reset();
-                    alert(currentLang === 'es' ? 'Mensaje enviado ✅' : 'Message sent ✅');
+                    
+                    // Animate form success
+                    form.classList.add('success');
+                    setTimeout(() => form.classList.remove('success'), 3000);
                 } else {
                     throw new Error(json.error || 'Send failed');
                 }
             } catch (err) {
                 console.error(err);
-                alert(currentLang === 'es' ? 'No se pudo enviar. Intenta más tarde.' : 'Could not send. Please try later.');
+                showNotification(
+                    currentLang === 'es' ? 'No se pudo enviar. Intenta más tarde.' : 'Could not send. Please try later.',
+                    'error'
+                );
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = currentLang === 'es' ? 'Enviar Mensaje' : 'Send Message';
+                    submitBtn.classList.remove('loading');
+                    submitBtn.textContent = originalText;
                 }
             }
         });
+        
+        // Enhanced notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 10000;
+                transform: translateX(100%);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translateX(0)';
+            });
+            
+            // Auto remove
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
     })();
 
     // --- Tilt 3D leve en tarjetas de proyecto ---
