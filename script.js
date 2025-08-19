@@ -527,5 +527,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })();
 
+    // --- Back to top button ---
+    (function initBackToTop() {
+        const backToTop = document.getElementById('back-to-top');
+        if (!backToTop) return;
+
+        // Show/hide button based on scroll position
+        const toggleBackToTop = () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        };
+
+        // Scroll to top smoothly
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Listen for scroll events (throttled)
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (!scrollTimeout) {
+                scrollTimeout = setTimeout(() => {
+                    toggleBackToTop();
+                    scrollTimeout = null;
+                }, 10);
+            }
+        }, { passive: true });
+
+        // Initial check
+        toggleBackToTop();
+    })();
+
+    // --- Update current year ---
+    (function updateCurrentYear() {
+        const yearElement = document.getElementById('current-year');
+        if (yearElement) {
+            yearElement.textContent = new Date().getFullYear();
+        }
+    })();
+
     console.log('✨ Script inicializado correctamente.');
 }); 
